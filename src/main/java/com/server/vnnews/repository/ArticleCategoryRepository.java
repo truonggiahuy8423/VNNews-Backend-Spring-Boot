@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ArticleCategoryRepository extends JpaRepository<ArticleCategory, ArticleCategoryId> {
-    // Các phương thức tùy chỉnh có thể được định nghĩa ở đây nếu cần
+    // Các phương thức tùy chỉnh có thể được định nghĩa ở đây nếu cầ
 }
