@@ -1,5 +1,6 @@
 package com.server.vnnews.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -17,9 +18,34 @@ public class Category {
     private String name;
 
     // Relation "One"
+    @JsonIgnore
     @OneToMany(mappedBy = "category")
     private List<ArticleCategory> articleCategories;
     // Relation "Many"
 
     // Constructors, getters, and setters
+
+    public Long getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public List<ArticleCategory> getArticleCategories() {
+        return articleCategories;
+    }
+
+    public void setArticleCategories(List<ArticleCategory> articleCategories) {
+        this.articleCategories = articleCategories;
+    }
 }

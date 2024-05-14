@@ -1,5 +1,6 @@
 package com.server.vnnews.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.util.List;
 
@@ -16,6 +17,7 @@ public class NotificationType {
     private String type;
 
     // Relation "One"
+    @JsonIgnore
     @OneToMany(mappedBy = "notificationType")
     private List<Notification> notifications;
 

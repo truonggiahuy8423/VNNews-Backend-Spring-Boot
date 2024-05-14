@@ -1,5 +1,6 @@
 package com.server.vnnews.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -26,12 +27,15 @@ public class Comment {
     private Date modifyTime;
 
     // Relation "One"
+    @JsonIgnore
     @OneToMany(mappedBy = "parentComment")
     private List<Comment> replies;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "comment")
     private List<LikeComment> likeComments;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "comment")
     private List<Notification> notifications;
 

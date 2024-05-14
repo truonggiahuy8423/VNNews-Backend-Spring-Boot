@@ -10,9 +10,6 @@ public class BodyItem {
     @Column(name = "body_item_id", columnDefinition = "BIGINT")
     private Long bodyItemId;
 
-    @Column(name = "is_thumbnail")
-    private Boolean isThumbnail;
-
     @Column(name = "image_name",columnDefinition = "TEXT")
     private String imageName;
 
