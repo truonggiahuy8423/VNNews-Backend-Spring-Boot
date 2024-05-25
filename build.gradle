@@ -16,10 +16,12 @@ repositories {
 }
 
 dependencies {
-	// https://mvnrepository.com/artifact/mysql/mysql-connector-java
-	implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.33'
+	implementation 'mysql:mysql-connector-java:8.0.33'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server:3.2.5'
+	implementation 'com.nimbusds:nimbus-jose-jwt:9.39'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 

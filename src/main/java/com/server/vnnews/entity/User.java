@@ -2,6 +2,8 @@ package com.server.vnnews.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import java.util.Date;
 import java.util.List;
 
@@ -41,8 +43,8 @@ public class User {
     @Column(name = "password")
     private String password;
 
-    @Column(name = "is_author")
-    private Boolean isAuthor;
+    @Column(name = "role")
+    private Integer role;
 
     // Relation "One"
     @JsonIgnore
@@ -158,11 +160,11 @@ public class User {
         this.password = password;
     }
 
-    public Boolean getAuthor() {
-        return isAuthor;
+    public Integer getRole() {
+        return role;
     }
 
-    public void setAuthor(Boolean author) {
-        isAuthor = author;
+    public void setRole(Integer author) {
+        role = author;
     }
 }

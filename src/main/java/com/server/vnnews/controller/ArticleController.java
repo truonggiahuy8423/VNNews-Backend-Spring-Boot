@@ -5,6 +5,8 @@ import com.server.vnnews.entity.Article;
 import com.server.vnnews.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,8 +18,8 @@ public class ArticleController {
     private ArticleService service;
 
     @GetMapping("/api/article/get-articles-in-news-feed")
-    public List<NewsFeedArticleDTO> getAll() {
-        return service.getArticlesInNewsFeed();
+    public ResponseEntity<List<NewsFeedArticleDTO>> getAll() {
+        return new ResponseEntity<>(service.getArticlesInNewsFeed(), HttpStatus.OK);
     }
 
     @GetMapping("/api/article/get-all")
