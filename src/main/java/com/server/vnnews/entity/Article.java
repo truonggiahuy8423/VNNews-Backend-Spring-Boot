@@ -86,6 +86,7 @@ public class Article {
         this.notifications = notifications;
     }
 
+    @JsonIgnore
     @Lob
     @Column(name = "thumbnail")
     private byte[] thumbnail;

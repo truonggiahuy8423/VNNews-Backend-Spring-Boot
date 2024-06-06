@@ -1,5 +1,6 @@
 package com.server.vnnews.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.server.vnnews.entity.composite.ArticleCategoryId;
 import jakarta.persistence.*;
 
@@ -11,11 +12,13 @@ public class ArticleCategory {
     // Relation "One"
 
     // Relation "Many"
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "article_id", insertable = false, updatable = false)
     private Article article;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "category_id", insertable = false, updatable = false)
     private Category category;
 

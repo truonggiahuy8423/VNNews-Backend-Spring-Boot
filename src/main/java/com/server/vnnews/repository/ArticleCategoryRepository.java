@@ -2,9 +2,12 @@ package com.server.vnnews.repository;
 
 import com.server.vnnews.entity.Article;
 import com.server.vnnews.entity.ArticleCategory;
+import com.server.vnnews.entity.BodyItem;
+import com.server.vnnews.entity.Category;
 import com.server.vnnews.entity.composite.ArticleCategoryId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -12,6 +15,10 @@ import java.util.List;
 @Repository
 public interface ArticleCategoryRepository extends JpaRepository<ArticleCategory, ArticleCategoryId> {
     // Các phương thức tùy chỉnh có thể được định nghĩa ở đây
-
-
+    @Query("SELECT new com.server.vnnews.entity.Category(c.categoryId, c.name) " +
+            "FROM Article a " +
+            "LEFT JOIN a.articleCategories ac " +
+            "LEFT JOIN ac.category c " +
+            "WHERE a.articleId = :articleId")
+    List<Category> getArticleCategoriesByArticleId(@Param("articleId") Long articleId);
 }
