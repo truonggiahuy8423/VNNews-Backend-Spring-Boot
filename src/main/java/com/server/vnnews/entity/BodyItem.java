@@ -21,6 +21,12 @@ public class BodyItem {
     @Column(name = "content", columnDefinition = "TEXT")
     private String content;
 
+    @Column(name = "ordinal_number")
+    private Integer ordinalNumber;
+
+    @Column(name = "body_title", columnDefinition = "TEXT")
+    private String bodyTitle;
+
     // Relation "One"
 
     // Relation "Many"
@@ -29,4 +35,60 @@ public class BodyItem {
     private Article article;
 
     // Constructors, getters, and setters
+
+    public Long getBodyItemId() {
+        return bodyItemId;
+    }
+
+    public void setBodyItemId(Long bodyItemId) {
+        this.bodyItemId = bodyItemId;
+    }
+
+    public String getImageName() {
+        return imageName;
+    }
+
+    public void setImageName(String imageName) {
+        this.imageName = imageName;
+    }
+
+    public byte[] getDataImage() {
+        return dataImage;
+    }
+
+    public void setDataImage(byte[] dataImage) {
+        this.dataImage = dataImage;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public Integer getOrdinalNumber() {
+        return ordinalNumber;
+    }
+
+    public void setOrdinalNumber(Integer ordinalNumber) {
+        this.ordinalNumber = ordinalNumber;
+    }
+
+    public String getBodyTitle() {
+        return bodyTitle;
+    }
+
+    public void setBodyTitle(String bodyTitle) {
+        this.bodyTitle = bodyTitle;
+    }
+
+    public Article getArticle() {
+        return article;
+    }
+
+    public void setArticle(Article article) {
+        this.article = article;
+    }
 }

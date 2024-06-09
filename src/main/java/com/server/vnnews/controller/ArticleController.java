@@ -1,10 +1,9 @@
 package com.server.vnnews.controller;
 
 import com.server.vnnews.dto.NewsFeedArticleDTO;
-import com.server.vnnews.entity.Article;
+import com.server.vnnews.dto.ArticleScrollPageDTO;
 import com.server.vnnews.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,5 +24,10 @@ public class ArticleController {
     @GetMapping("/api/article/get-all")
     public List<NewsFeedArticleDTO> getArticlesInNewsFeed() {
         return service.getArticlesInNewsFeed();
+    }
+
+    @GetMapping("/get-articles-in-scroll-page")
+    public List<ArticleScrollPageDTO> getArticlesInScrollPage(){
+        return service.getArticlesScrollPage();
     }
 }
