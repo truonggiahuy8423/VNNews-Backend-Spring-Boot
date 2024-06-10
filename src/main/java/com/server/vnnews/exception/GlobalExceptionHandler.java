@@ -11,4 +11,9 @@ public class GlobalExceptionHandler {
     ResponseEntity<ResponseException> handlingRuntimeException(AppRuntimeException exception) {
         return new ResponseEntity<>(new ResponseException(exception.getMessage(), exception.getCode()), HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(value = DatabaseException.class)
+    ResponseEntity<ResponseException> handlingRuntimeException(DatabaseException exception) {
+        return new ResponseEntity<>(new ResponseException(exception.getMessage(), exception.getCode()), HttpStatus.BAD_REQUEST);
+    }
 }

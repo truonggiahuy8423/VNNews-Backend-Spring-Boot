@@ -28,7 +28,7 @@ public class AuthenticationService {
         if (user != null && user.getPassword().equals(request.getPassword())) {
             return new AuthenticationResponse(generateToken(user), true);
         } else {
-            throw new AppRuntimeException("Incorrect email or password!", AppRuntimeException.AUTHENTICATION_FAILED);
+            throw new AppRuntimeException(AppRuntimeException.AUTHENTICATION_FAILED_MESSAGE, AppRuntimeException.AUTHENTICATION_FAILED);
         }
     }
 
@@ -43,9 +43,9 @@ public class AuthenticationService {
         }
     }
 
-    public static Integer getUserIdFromToken(String token) throws ParseException {
+    public static Long getUserIdFromToken(String token) throws ParseException {
         SignedJWT signedJWT = SignedJWT.parse(token);
-        return Integer.valueOf(signedJWT.getJWTClaimsSet().getClaim("user_id").toString());
+        return Long.valueOf(signedJWT.getJWTClaimsSet().getClaim("user_id").toString());
     }
 
     public static String getEmailFromToken(String token) throws ParseException {
