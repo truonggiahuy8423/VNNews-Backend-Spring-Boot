@@ -3,6 +3,7 @@ import com.server.vnnews.dto.ArticleInReadingPageDTO;
 import com.server.vnnews.dto.ArticleScrollPageDTO;
 import com.server.vnnews.dto.NewsFeedArticleDTO;
 import com.server.vnnews.entity.Article;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -32,5 +33,5 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
             "LEFT JOIN a.user u " +
             "LEFT JOIN u.followers f " +
             "GROUP BY a.articleId, a.title, a.description, a.thumbnail, a.thumbnailName, a.createTime, a.modifyTime, u.userId, u.name, u.avatar")
-    List<ArticleScrollPageDTO> getArticlesScrollPage();
+    List<ArticleScrollPageDTO> getArticlesScrollPage(Pageable pageable);
 }

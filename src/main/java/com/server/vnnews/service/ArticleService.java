@@ -7,12 +7,11 @@ import com.server.vnnews.entity.Article;
 import com.server.vnnews.repository.ArticleRepository;
 import com.server.vnnews.repository.BodyItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,8 +30,9 @@ public class ArticleService {
         return repository.findAll();
     }
 
-    public List<ArticleScrollPageDTO> getArticlesScrollPage(){
-        List<ArticleScrollPageDTO> articleScrollPageDTOList = repository.getArticlesScrollPage();
+    public List<ArticleScrollPageDTO> getArticlesScrollPage(int pageIndex){
+        Pageable pageable =  PageRequest.of(pageIndex - 1, 10); // pageIndex - 1 vì Spring Data JPA sử dụng chỉ mục trang từ 0
+        List<ArticleScrollPageDTO> articleScrollPageDTOList = repository.getArticlesScrollPage(pageable);
         return articleScrollPageDTOList.stream().map(dto -> {
             List<BodyItemDTO> bodyItemDTOList = bodyItemRepository.findByArticleId(dto.getArticleId()).stream()
                     .map(bodyItem -> new BodyItemDTO(bodyItem.getBodyItemId(), bodyItem.getImageName(), bodyItem.getContent(), bodyItem.getDataImage() , bodyItem.getBodyTitle(), bodyItem.getOrdinalNumber()))
