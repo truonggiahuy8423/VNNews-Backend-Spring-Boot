@@ -1,9 +1,6 @@
 package com.server.vnnews.service;
 
-import com.server.vnnews.dto.ArticleInReadingPageDTO;
-import com.server.vnnews.dto.CommentPostingRequest;
-import com.server.vnnews.dto.NewsFeedArticleDTO;
-import com.server.vnnews.dto.UserCommentDTO;
+import com.server.vnnews.dto.*;
 import com.server.vnnews.entity.Article;
 import com.server.vnnews.entity.Comment;
 import com.server.vnnews.entity.User;
@@ -13,9 +10,7 @@ import com.server.vnnews.repository.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import com.server.vnnews.dto.BodyItemDTO;
 import com.server.vnnews.dto.NewsFeedArticleDTO;
-import com.server.vnnews.dto.ArticleScrollPageDTO;
 import com.server.vnnews.entity.Article;
 import com.server.vnnews.repository.ArticleRepository;
 import com.server.vnnews.repository.BodyItemRepository;
@@ -61,9 +56,14 @@ public class ArticleService {
         return article;
     }
 
-    public List<UserCommentDTO> getCommentsByArticleId(Long articleId, Integer pageIndex) {
+    public CommentLoadingResponse getCommentsByArticleId(Long articleId, Integer pageIndex) {
+        Long commentCount = commentRepository.count();
+        Integer maxPageIndex = (commentCount.intValue())/10;
+
+
+
         Pageable pageable = PageRequest.of(pageIndex - 1, 10); // pageIndex - 1 vì Spring Data JPA sử dụng chỉ mục trang từ 0
-        return articleRepository.getCommentsByArticleId(articleId, pageable);
+        return new CommentLoadingResponse(articleRepository.getCommentsByArticleId(articleId, pageable), commentCount, maxPageIndex);
     }
     public List<Object[]> test() {
         return articleRepository.test();
@@ -123,7 +123,7 @@ public class ArticleService {
 
     public List<ArticleScrollPageDTO> getArticlesScrollPage(int pageIndex){
         Pageable pageable =  PageRequest.of(pageIndex - 1, 5); // pageIndex - 1 vì Spring Data JPA sử dụng chỉ mục trang từ 0
-        List<ArticleScrollPageDTO> articleScrollPageDTOList = repository.getArticlesScrollPage(pageable);
+        List<ArticleScrollPageDTO> articleScrollPageDTOList = articleRepository.getArticlesScrollPage(pageable);
         return articleScrollPageDTOList.stream().map(dto -> {
             List<BodyItemDTO> bodyItemDTOList = bodyItemRepository.findByArticleId(dto.getArticleId()).stream()
                     .map(bodyItem -> new BodyItemDTO(bodyItem.getBodyItemId(), null, bodyItem.getContent(), null , bodyItem.getBodyTitle(), bodyItem.getOrdinalNumber()))

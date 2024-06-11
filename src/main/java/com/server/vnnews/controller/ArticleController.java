@@ -1,12 +1,8 @@
 package com.server.vnnews.controller;
 
-import com.server.vnnews.dto.ArticleInReadingPageDTO;
-import com.server.vnnews.dto.CommentPostingRequest;
-import com.server.vnnews.dto.NewsFeedArticleDTO;
-import com.server.vnnews.dto.UserCommentDTO;
+import com.server.vnnews.dto.*;
 import com.server.vnnews.entity.Article;
 import com.server.vnnews.exception.AppRuntimeException;
-import com.server.vnnews.dto.ArticleScrollPageDTO;
 import com.server.vnnews.service.ArticleService;
 import com.server.vnnews.service.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +48,7 @@ public class ArticleController {
     }
 
     @GetMapping("api/article/get-comments-by-article-id")
-    public ResponseEntity<List<UserCommentDTO>> getCommentsByArticleId(@RequestParam(value = "article_id", required = true) long articleId, @RequestParam(value = "page_index", required = true) int pageIndex) {
+    public ResponseEntity<CommentLoadingResponse> getCommentsByArticleId(@RequestParam(value = "article_id", required = true) long articleId, @RequestParam(value = "page_index", required = true) int pageIndex) {
         return new ResponseEntity<>(service.getCommentsByArticleId(articleId, pageIndex), HttpStatus.OK);
     }
 
