@@ -25,4 +25,10 @@ public class AuthenticationController {
     public ResponseEntity<AuthenticationResponse> login(@RequestBody AuthenticationRequest user) throws JOSEException {
         return new ResponseEntity<>(authenticationService.login(user), HttpStatus.OK);
     }
+
+    @PostMapping("/api/auth/register")
+    public ResponseEntity<AuthenticationResponse> register(@RequestBody AuthenticationRequest user) throws JOSEException {
+        return new ResponseEntity<>(authenticationService.register(user), HttpStatus.OK);
+    }
+
 }
