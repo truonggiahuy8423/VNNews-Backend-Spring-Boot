@@ -29,7 +29,7 @@ public class ArticleController {
 
     @GetMapping("/api/article/get-articles-in-news-feed")
     public ResponseEntity<List<NewsFeedArticleDTO>> getArticles(@RequestParam(value = "page_index", required = true) int pageIndex,
-                                                           @RequestHeader("Authorization") String token) {
+                                                                @RequestHeader("Authorization") String token) {
         String jwt = token.substring(7);
         try {
             String email = AuthenticationService.getEmailFromToken(jwt);
@@ -67,16 +67,41 @@ public class ArticleController {
 
     @GetMapping("/get-articles-in-scroll-page")
     public ResponseEntity<List<ArticleScrollPageDTO>> getArticlesInScrollPage(@RequestParam(value = "page_index", required = true) int pageIndex,
-                                                                              @RequestHeader("Authorization") String token){
+                                                                              @RequestHeader("Authorization") String token) {
         String jwt = token.substring(7);
         try {
             String email = AuthenticationService.getEmailFromToken(jwt);
             System.out.println(email);
         } catch (ParseException e) {
             // handle exception
-            System.out.println("Lỗi");
-
+            throw new AppRuntimeException(AppRuntimeException.AUTHENTICATION_FAILED_MESSAGE, AppRuntimeException.AUTHENTICATION_FAILED);
         }
         return new ResponseEntity<>(service.getArticlesScrollPage(pageIndex), HttpStatus.OK);
+    }
+
+    @PostMapping("api/article/like-comment")
+    public ResponseEntity<LikeCommentDTO> likeComment(@RequestBody LikeCommentDTO likeCommentDTO, @RequestHeader("Authorization") String token) {
+        String jwt = token.substring(7);
+        try {
+            Long userIdFromToken = AuthenticationService.getUserIdFromToken(jwt);
+            likeCommentDTO.setUserId(userIdFromToken);
+            System.out.println(userIdFromToken);
+        } catch (ParseException e) {
+            throw new AppRuntimeException(AppRuntimeException.AUTHENTICATION_FAILED_MESSAGE, AppRuntimeException.AUTHENTICATION_FAILED);
+        }
+        return new ResponseEntity<>(service.saveLikeComment(likeCommentDTO), HttpStatus.OK);
+    }
+
+    @PostMapping("api/article/unlike-comment")
+    public ResponseEntity<LikeCommentDTO> unlikeComment(@RequestBody LikeCommentDTO likeCommentDTO, @RequestHeader("Authorization") String token) {
+        String jwt = token.substring(7);
+        try {
+            Long userIdFromToken = AuthenticationService.getUserIdFromToken(jwt);
+            likeCommentDTO.setUserId(userIdFromToken);
+            System.out.println(userIdFromToken);
+        } catch (ParseException e) {
+            throw new AppRuntimeException(AppRuntimeException.AUTHENTICATION_FAILED_MESSAGE, AppRuntimeException.AUTHENTICATION_FAILED);
+        }
+        return new ResponseEntity<>(service.unlikeComment(likeCommentDTO), HttpStatus.OK);
     }
 }

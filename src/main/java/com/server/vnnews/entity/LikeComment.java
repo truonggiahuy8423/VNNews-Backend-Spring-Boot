@@ -24,4 +24,46 @@ public class LikeComment {
     private Comment comment;
 
     // Constructors, getters, and setters
+
+    public LikeComment() {
+    }
+
+    public LikeComment(LikeCommentId id, Date time, User user, Comment comment) {
+        this.id = id;
+        this.time = time;
+        this.user = user;
+        this.comment = comment;
+    }
+
+    public LikeCommentId getId() {
+        return id;
+    }
+
+    public void setId(LikeCommentId id) {
+        this.id = id;
+    }
+
+    public Date getTime() {
+        return time;
+    }
+
+    public void setTime(Date time) {
+        this.time = time;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Comment getComment() {
+        return comment;
+    }
+
+    public void setComment(Comment comment) {
+        this.comment = comment;
+    }
 }

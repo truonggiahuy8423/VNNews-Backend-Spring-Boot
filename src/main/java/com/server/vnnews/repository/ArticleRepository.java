@@ -87,4 +87,6 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
             "LEFT JOIN u.followers f " +
             "GROUP BY a.articleId, a.title, a.description, a.thumbnail, a.thumbnailName, a.createTime, a.modifyTime, u.userId, u.name, u.avatar")
     List<ArticleScrollPageDTO> getArticlesScrollPage(Pageable pageable);
+
+
 }

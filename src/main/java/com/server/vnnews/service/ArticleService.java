@@ -1,9 +1,8 @@
 package com.server.vnnews.service;
 
 import com.server.vnnews.dto.*;
-import com.server.vnnews.entity.Article;
-import com.server.vnnews.entity.Comment;
-import com.server.vnnews.entity.User;
+import com.server.vnnews.entity.*;
+import com.server.vnnews.entity.composite.LikeCommentId;
 import com.server.vnnews.exception.AppRuntimeException;
 import com.server.vnnews.exception.DatabaseException;
 import com.server.vnnews.repository.*;
@@ -38,6 +37,9 @@ public class ArticleService {
 
     @Autowired
     private CommentRepository commentRepository;
+
+    @Autowired
+    private LikeCommentRepository likeCommentRepository;
 
     @Autowired
     private ArticleCategoryRepository articleCategoryRepository;
@@ -131,5 +133,56 @@ public class ArticleService {
             dto.setBodyItemList(bodyItemDTOList);
             return dto;
         }).collect(Collectors.toList());
+    }
+
+    @Transactional
+    public LikeCommentDTO saveLikeComment(LikeCommentDTO likeCommentDTO) {
+        LikeComment likeComment = new LikeComment();
+
+        // Đặt thời gian tạo và sửa đổi
+        likeComment.setTime(likeCommentDTO.getTime());
+
+        // Tạo một đối tượng Article chỉ bằng cách đặt articleId
+        Comment comment = new Comment();
+        comment.setCommentId(likeCommentDTO.getCommentId()); // Giả sử articleId là thuộc tính trong UserCommentDTO
+
+        User user = new User();
+        user.setUserId(likeCommentDTO.getUserId()); // Giả sử articleId là thuộc tính trong UserCommentDTO
+
+        // Gán đối tượng Article cho comment
+        likeComment.setComment(comment);
+        likeComment.setUser(user);
+
+
+        LikeComment insertedLikeComment = null;
+        try {
+            insertedLikeComment = likeCommentRepository.save(likeComment);
+            // Hãy bỏ dữ liệu từ Comment sang commentDTO
+            LikeCommentDTO commentDTO = new LikeCommentDTO();
+            commentDTO.setCommentId(insertedLikeComment.getId().getCommentId());
+            commentDTO.setUserId(insertedLikeComment.getId().getUserId());
+            commentDTO.setTime(insertedLikeComment.getTime());
+
+            return commentDTO;
+        } catch (DataIntegrityViolationException e) {
+            throw new DatabaseException(e.getMessage(), DatabaseException.DATA_INTEGRITY_VIOLATION);
+        } catch (Exception e) {
+            throw new AppRuntimeException(e.getMessage(), AppRuntimeException.UNKNOWN_ERROR);
+        }
+    }
+
+    @Transactional
+    public LikeCommentDTO unlikeComment(LikeCommentDTO likeCommentDTO) {
+        LikeCommentId likeCommentId = new LikeCommentId(likeCommentDTO.getUserId(), likeCommentDTO.getCommentId());
+
+        try {
+            likeCommentRepository.deleteById(likeCommentId);
+
+            return likeCommentDTO;
+        } catch (DataIntegrityViolationException e) {
+            throw new DatabaseException(e.getMessage(), DatabaseException.DATA_INTEGRITY_VIOLATION);
+        } catch (Exception e) {
+            throw new AppRuntimeException(e.getMessage(), AppRuntimeException.UNKNOWN_ERROR);
+        }
     }
 }
