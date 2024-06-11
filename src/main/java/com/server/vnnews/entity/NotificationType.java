@@ -16,6 +16,30 @@ public class NotificationType {
     @Column(name = "type", columnDefinition = "VARCHAR(50)")
     private String type;
 
+    public Long getNotificationTypeId() {
+        return notificationTypeId;
+    }
+
+    public void setNotificationTypeId(Long notificationTypeId) {
+        this.notificationTypeId = notificationTypeId;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public List<Notification> getNotifications() {
+        return notifications;
+    }
+
+    public void setNotifications(List<Notification> notifications) {
+        this.notifications = notifications;
+    }
+
     // Relation "One"
     @JsonIgnore
     @OneToMany(mappedBy = "notificationType")
