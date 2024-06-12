@@ -18,11 +18,20 @@ public class NewsFeedArticleDTO {
     private String userName;
     private byte[] avatar;
     private Long followCount;
+    private Long saveCount;
+
+    public Long getSaveCount() {
+        return saveCount;
+    }
+
+    public void setSaveCount(Long saveCount) {
+        this.saveCount = saveCount;
+    }
     // Construction
     public NewsFeedArticleDTO() {
     }
 
-    public NewsFeedArticleDTO(Long articleId, String title, String description, byte[] thumbnail, String thumbnailName, Date createTime, Date modifyTime, Long viewCount, Long commentCount, Long userId, String userName, byte[] avatar, Long followCount) {
+    public NewsFeedArticleDTO(Long articleId, String title, String description, byte[] thumbnail, String thumbnailName, Date createTime, Date modifyTime, Long viewCount, Long commentCount, Long userId, String userName, byte[] avatar, Long followCount, Long saveCount) {
         this.articleId = articleId;
         this.title = title;
         this.description = description;
@@ -36,6 +45,7 @@ public class NewsFeedArticleDTO {
         this.userName = userName;
         this.avatar = avatar;
         this.followCount = followCount;
+        this.saveCount = saveCount;
     }
 
     public Long getArticleId() {

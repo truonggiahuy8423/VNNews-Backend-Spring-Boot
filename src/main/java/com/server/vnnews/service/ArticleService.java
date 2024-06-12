@@ -1,5 +1,6 @@
 package com.server.vnnews.service;
 
+import com.server.vnnews.common.FilterType;
 import com.server.vnnews.dto.*;
 import com.server.vnnews.entity.*;
 import com.server.vnnews.entity.composite.LikeCommentId;
@@ -19,8 +20,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.web.bind.annotation.RequestParam;
 
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,12 +46,92 @@ public class ArticleService {
     private LikeCommentRepository likeCommentRepository;
 
     @Autowired
+    private CategoryRepository categoryRepository;
+
+
+    @Autowired
     private ArticleCategoryRepository articleCategoryRepository;
 
-    public List<NewsFeedArticleDTO> getArticlesInNewsFeed(int pageIndex) {
+    public List<NewsFeedArticleDTO> getArticlesInNewsFeed(int pageIndex, Long categoryId, int filterType) {
         Pageable pageable = PageRequest.of(pageIndex - 1, 10); // pageIndex - 1 vì Spring Data JPA sử dụng chỉ mục trang từ 0
-        return articleRepository.getArticlesInNewsFeed(pageable);
+        Date startTime;
+        Date endTime;
+
+        // Calculate start and end time based on filter type
+        Calendar calendar = Calendar.getInstance();
+        switch (filterType) {
+            case FilterType.TODAY:
+                calendar.set(Calendar.HOUR_OF_DAY, 0);
+                calendar.set(Calendar.MINUTE, 0);
+                calendar.set(Calendar.SECOND, 0);
+                calendar.set(Calendar.MILLISECOND, 0);
+                startTime = calendar.getTime();
+                calendar.set(Calendar.HOUR_OF_DAY, 23);
+                calendar.set(Calendar.MINUTE, 59);
+                calendar.set(Calendar.SECOND, 59);
+                calendar.set(Calendar.MILLISECOND, 999);
+                endTime = calendar.getTime();
+                break;
+            case FilterType.WEEK:
+                calendar.set(Calendar.DAY_OF_WEEK, calendar.getFirstDayOfWeek());
+                calendar.set(Calendar.HOUR_OF_DAY, 0);
+                calendar.set(Calendar.MINUTE, 0);
+                calendar.set(Calendar.SECOND, 0);
+                calendar.set(Calendar.MILLISECOND, 0);
+                startTime = calendar.getTime();
+                calendar.add(Calendar.WEEK_OF_YEAR, 1);
+                calendar.add(Calendar.MILLISECOND, -1);
+                endTime = calendar.getTime();
+                break;
+            case FilterType.MONTH:
+                calendar.set(Calendar.DAY_OF_MONTH, 1);
+                calendar.set(Calendar.HOUR_OF_DAY, 0);
+                calendar.set(Calendar.MINUTE, 0);
+                calendar.set(Calendar.SECOND, 0);
+                calendar.set(Calendar.MILLISECOND, 0);
+                startTime = calendar.getTime();
+                calendar.add(Calendar.MONTH, 1);
+                calendar.add(Calendar.MILLISECOND, -1);
+                endTime = calendar.getTime();
+                break;
+            default:
+                startTime = null;
+                endTime = null;
+                break;
+        }
+
+        if (categoryId == -1) {
+            switch (filterType) {
+                case FilterType.NEWEST:
+                    return articleRepository.getArticlesInNewsFeedWithNewestFilter(pageable);
+                case FilterType.EXPLORE:
+                    return articleRepository.getArticlesInNewsFeedWithNewestFilter(pageable);
+                case FilterType.TODAY:
+                case FilterType.WEEK:
+                case FilterType.MONTH:
+                    if (startTime != null && endTime != null) {
+                        return articleRepository.getArticlesInNewsFeedWithHighestViewFilter(startTime, endTime, pageable);
+                    }
+                    break;
+            }
+        } else {
+            switch (filterType) {
+                case FilterType.NEWEST:
+                    return articleRepository.getArticlesInNewsFeedWithCategoryIdAndNewestFilter(pageable, categoryId);
+                case FilterType.EXPLORE:
+                    return articleRepository.getArticlesInNewsFeedWithCategoryIdAndNewestFilter(pageable, categoryId);
+                case FilterType.TODAY:
+                case FilterType.WEEK:
+                case FilterType.MONTH:
+                    if (startTime != null && endTime != null) {
+                        return articleRepository.getArticlesInNewsFeedWithCategoryIdAndHighestViewFilter(startTime, endTime, categoryId, pageable);
+                    }
+                    break;
+            }
+        }
+        return articleRepository.getArticlesInNewsFeedWithNewestFilter(pageable);
     }
+
 
     public ArticleInReadingPageDTO getArticleById(Long articleId) {
         ArticleInReadingPageDTO article = new ArticleInReadingPageDTO(
@@ -185,4 +269,8 @@ public class ArticleService {
             throw new AppRuntimeException(e.getMessage(), AppRuntimeException.UNKNOWN_ERROR);
         }
     }
+    public List<Category> getAllCategories() {
+        return categoryRepository.findAll();
+    }
+
 }

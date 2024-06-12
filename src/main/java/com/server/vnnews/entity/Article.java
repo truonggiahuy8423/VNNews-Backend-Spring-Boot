@@ -129,7 +129,11 @@ public class Article {
     private User user;
 
 
+
+
     // Constructors, getters, and setters
+
+
     public Long getArticleId() {
         return articleId;
     }

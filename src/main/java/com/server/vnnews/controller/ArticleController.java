@@ -2,6 +2,7 @@ package com.server.vnnews.controller;
 
 import com.server.vnnews.dto.*;
 import com.server.vnnews.entity.Article;
+import com.server.vnnews.entity.Category;
 import com.server.vnnews.exception.AppRuntimeException;
 import com.server.vnnews.service.ArticleService;
 import com.server.vnnews.service.AuthenticationService;
@@ -29,6 +30,8 @@ public class ArticleController {
 
     @GetMapping("/api/article/get-articles-in-news-feed")
     public ResponseEntity<List<NewsFeedArticleDTO>> getArticles(@RequestParam(value = "page_index", required = true) int pageIndex,
+                                                                @RequestParam(value = "category_id", required = true) Long categoryId,
+                                                                @RequestParam(value = "filter_type", required = true) int filterType,
                                                                 @RequestHeader("Authorization") String token) {
         String jwt = token.substring(7);
         try {
@@ -39,8 +42,23 @@ public class ArticleController {
             throw new AppRuntimeException(AppRuntimeException.AUTHENTICATION_FAILED_MESSAGE, AppRuntimeException.AUTHENTICATION_FAILED);
 
         }
-        return new ResponseEntity<>(service.getArticlesInNewsFeed(pageIndex), HttpStatus.OK);
+        return new ResponseEntity<>(service.getArticlesInNewsFeed(pageIndex, categoryId, filterType), HttpStatus.OK);
     }
+
+//    @GetMapping("/api/article/get-articles-in-news-feed")
+//    public ResponseEntity<List<NewsFeedArticleDTO>> getArticles(@RequestParam(value = "page_index", required = true) int pageIndex,
+//                                                                @RequestHeader("Authorization") String token) {
+//        String jwt = token.substring(7);
+//        try {
+//            String email = AuthenticationService.getEmailFromToken(jwt);
+//            System.out.println(email);
+//        } catch (ParseException e) {
+//            // handle exception
+//            throw new AppRuntimeException(AppRuntimeException.AUTHENTICATION_FAILED_MESSAGE, AppRuntimeException.AUTHENTICATION_FAILED);
+//
+//        }
+//        return new ResponseEntity<>(service.getArticlesInNewsFeed(pageIndex), HttpStatus.OK);
+//    }
 
     @GetMapping("api/article/get-article-by-id")
     public ResponseEntity<ArticleInReadingPageDTO> getArticleById(@RequestParam(value = "article_id", required = true) long articleId) {
@@ -104,4 +122,11 @@ public class ArticleController {
         }
         return new ResponseEntity<>(service.unlikeComment(likeCommentDTO), HttpStatus.OK);
     }
+
+    @GetMapping("/api/article/get-all-categories")
+    public ResponseEntity<List<Category>> getAllCategories() {
+        List<Category> categories = service.getAllCategories();
+        return new ResponseEntity<>(categories, HttpStatus.OK);
+    }
+
 }

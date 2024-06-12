@@ -9,6 +9,7 @@ public class ArticleInReadingPageDTO extends NewsFeedArticleDTO {
     private List<BodyItem> bodyItemList;
     private List<Category> categories;
 
+
     public List<BodyItem> getBodyItemList() {
         return bodyItemList;
     }
@@ -27,7 +28,9 @@ public class ArticleInReadingPageDTO extends NewsFeedArticleDTO {
                 newsFeedArticleDTO.getUserId(),
                 newsFeedArticleDTO.getUserName(),
                 newsFeedArticleDTO.getAvatar(),
-                newsFeedArticleDTO.getFollowCount());
+                newsFeedArticleDTO.getFollowCount(),
+                newsFeedArticleDTO.getSaveCount()
+        );
         this.bodyItemList = bodyItemList;
         this.categories = categories;
     }

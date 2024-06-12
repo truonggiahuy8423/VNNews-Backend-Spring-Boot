@@ -13,21 +13,69 @@ import org.springframework.stereotype.Repository;
 import org.springframework.data.domain.Pageable;
 
 
+import java.util.Date;
 import java.util.List;
 
 @Repository
 public interface ArticleRepository extends JpaRepository<Article, Long> {
     @Query("SELECT new com.server.vnnews.dto.NewsFeedArticleDTO(" +
             "a.articleId, a.title, a.description, a.thumbnail, a.thumbnailName, a.createTime, a.modifyTime, " +
-            "COUNT(v), COUNT(c), u.userId, u.name, u.avatar, COUNT(f)) " +
+            "COUNT(v), COUNT(c), u.userId, u.name, u.avatar, COUNT(f), COUNT(fa)) " +
             "FROM Article a " +
             "LEFT JOIN a.views v " +
             "LEFT JOIN a.comments c " +
+            "LEFT JOIN a.favorites fa " +
             "LEFT JOIN a.user u " +
             "LEFT JOIN u.followers f " +
-            "GROUP BY a.articleId, a.title, a.description, a.thumbnail, a.thumbnailName, a.createTime, a.modifyTime, u.userId, u.name, u.avatar")
-//    @Query("SELECT a, c FROM Article a OUTER JOIN a.articleCategories ac OUTER JOIN ac.category c group by a")
-    List<NewsFeedArticleDTO> getArticlesInNewsFeed(Pageable pageable);
+            "GROUP BY a.articleId, a.title, a.description, a.thumbnail, a.thumbnailName, a.createTime, a.modifyTime, u.userId, u.name, u.avatar " +
+            "ORDER BY a.createTime DESC")
+    List<NewsFeedArticleDTO> getArticlesInNewsFeedWithNewestFilter(Pageable pageable);
+
+
+    @Query("SELECT new com.server.vnnews.dto.NewsFeedArticleDTO(" +
+            "a.articleId, a.title, a.description, a.thumbnail, a.thumbnailName, a.createTime, a.modifyTime, " +
+            "COUNT(v), COUNT(c), u.userId, u.name, u.avatar, COUNT(f), COUNT(fa)) " +
+            "FROM Article a " +
+            "LEFT JOIN a.views v " +
+            "LEFT JOIN a.comments c " +
+            "LEFT JOIN a.favorites fa " +
+            "LEFT JOIN a.user u " +
+            "LEFT JOIN u.followers f " +
+            "LEFT JOIN a.articleCategories ac " +
+            "WHERE ac.id.categoryId = :categoryId " +
+            "GROUP BY a.articleId, a.title, a.description, a.thumbnail, a.thumbnailName, a.createTime, a.modifyTime, u.userId, u.name, u.avatar " +
+            "ORDER BY a.createTime DESC")
+    List<NewsFeedArticleDTO> getArticlesInNewsFeedWithCategoryIdAndNewestFilter(Pageable pageable, @Param("categoryId")  Long categoryId);
+
+    @Query("SELECT new com.server.vnnews.dto.NewsFeedArticleDTO(" +
+            "a.articleId, a.title, a.description, a.thumbnail, a.thumbnailName, a.createTime, a.modifyTime, " +
+            "COUNT(v), COUNT(c), u.userId, u.name, u.avatar, COUNT(f), COUNT(fa)) " +
+            "FROM Article a " +
+            "LEFT JOIN a.views v ON v.time >= :startTime AND v.time < :endTime " +
+            "LEFT JOIN a.comments c " +
+            "LEFT JOIN a.favorites fa " +
+            "LEFT JOIN a.user u " +
+            "LEFT JOIN u.followers f " +
+            "GROUP BY a.articleId, a.title, a.description, a.thumbnail, a.thumbnailName, a.createTime, a.modifyTime, u.userId, u.name, u.avatar " +
+            "ORDER BY COUNT(v) DESC")
+    List<NewsFeedArticleDTO> getArticlesInNewsFeedWithHighestViewFilter(@Param("startTime") Date startTime, @Param("endTime") Date endTime, Pageable pageable);
+
+    @Query("SELECT new com.server.vnnews.dto.NewsFeedArticleDTO(" +
+            "a.articleId, a.title, a.description, a.thumbnail, a.thumbnailName, a.createTime, a.modifyTime, " +
+            "COUNT(v), COUNT(c), u.userId, u.name, u.avatar, COUNT(f), COUNT(fa)) " +
+            "FROM Article a " +
+            "LEFT JOIN a.views v ON v.article.articleId = a.articleId AND v.time >= :startTime AND v.time < :endTime " +
+            "LEFT JOIN a.comments c " +
+            "LEFT JOIN a.favorites fa " +
+            "LEFT JOIN a.user u " +
+            "LEFT JOIN u.followers f " +
+            "LEFT JOIN a.articleCategories ac " +
+            "WHERE ac.id.categoryId = :categoryId " +
+            "GROUP BY a.articleId, a.title, a.description, a.thumbnail, a.thumbnailName, a.createTime, a.modifyTime, u.userId, u.name, u.avatar " +
+            "ORDER BY COUNT(v) DESC")
+    List<NewsFeedArticleDTO> getArticlesInNewsFeedWithCategoryIdAndHighestViewFilter(@Param("startTime") Date startTime, @Param("endTime") Date endTime, @Param("categoryId") Long categoryId, Pageable pageable);
+
+
     // Các phương thức tùy chỉnh có thể được định nghĩa ở đây nếu cần
 
 //    @Query("SELECT a.articleId, a.title, a.description, a.thumbnailName, a.createTime, a.modifyTime, " +
@@ -43,10 +91,11 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
 
     @Query("SELECT new com.server.vnnews.dto.NewsFeedArticleDTO(" +
             "a.articleId, a.title, a.description, a.thumbnail, a.thumbnailName, a.createTime, a.modifyTime, " +
-            "COUNT(v), COUNT(c), u.userId, u.name, u.avatar, COUNT(f)) " +
+            "COUNT(v), COUNT(c), u.userId, u.name, u.avatar, COUNT(f), COUNT(fa)) " +
             "FROM Article a " +
             "LEFT JOIN a.views v " +
             "LEFT JOIN a.comments c " +
+            "LEFT JOIN a.favorites fa " +
             "LEFT JOIN a.user u " +
             "LEFT JOIN u.followers f " +
             "WHERE a.articleId = :articleId " +  // Thêm điều kiện articleId vào truy vấn

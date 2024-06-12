@@ -25,6 +25,9 @@ public class Category {
 
     // Constructors, getters, and setters
 
+    public Category() {
+    }
+
     public Category(Long categoryId, String name) {
         this.categoryId = categoryId;
         this.name = name;

@@ -24,4 +24,46 @@ public class View implements Serializable {
     private Article article;
 
     // Constructors, getters, and setters
+
+    public View() {
+    }
+
+    public View(ViewId id, Date time, User user, Article article) {
+        this.id = id;
+        this.time = time;
+        this.user = user;
+        this.article = article;
+    }
+
+    public ViewId getId() {
+        return id;
+    }
+
+    public void setId(ViewId id) {
+        this.id = id;
+    }
+
+    public Date getTime() {
+        return time;
+    }
+
+    public void setTime(Date time) {
+        this.time = time;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Article getArticle() {
+        return article;
+    }
+
+    public void setArticle(Article article) {
+        this.article = article;
+    }
 }
