@@ -75,4 +75,19 @@ public class AuthenticationService {
 
         return signedJWT.serialize();
     }
+    // register
+    public AuthenticationResponse register(AuthenticationRequest request) throws JOSEException, AppRuntimeException {
+        User user = userRepository.findByEmail(request.getEmail());
+
+        if (user == null) {
+            user = new User();
+            user.setEmail(request.getEmail());
+            user.setPassword(request.getPassword());
+            user.setRole(1);
+            userRepository.save(user);
+            return new AuthenticationResponse(generateToken(user), true);
+        } else {
+            throw new AppRuntimeException(AppRuntimeException.EMAIL_EXISTED_MESSAGE, AppRuntimeException.EMAIL_EXISTED);
+        }
+    }
 }
