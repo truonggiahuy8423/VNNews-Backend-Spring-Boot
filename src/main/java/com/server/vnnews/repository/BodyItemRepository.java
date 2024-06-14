@@ -19,9 +19,4 @@ public interface BodyItemRepository extends JpaRepository<BodyItem, Long> {
             "LEFT JOIN a.bodyItems b " +
             "WHERE a.articleId = :articleId")
     List<BodyItem> getArticleBodyItemsByArticleId(@Param("articleId") Long articleId);
-    
-    @Query("SELECT bi " +
-            "FROM BodyItem bi " +
-            "WHERE bi.article.articleId = :articleId")
-    public List<BodyItem> findByArticleId(@Param("articleId") Long articleId);
 }

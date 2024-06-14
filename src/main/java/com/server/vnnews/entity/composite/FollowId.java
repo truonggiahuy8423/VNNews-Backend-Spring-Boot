@@ -12,4 +12,28 @@ public class FollowId implements Serializable {
     private Long followedId;
 
     // Constructors, getters, and setters
+
+    public FollowId() {
+    }
+
+    public FollowId(Long followerId, Long followedId) {
+        this.followerId = followerId;
+        this.followedId = followedId;
+    }
+
+    public Long getFollowerId() {
+        return followerId;
+    }
+
+    public void setFollowerId(Long followerId) {
+        this.followerId = followerId;
+    }
+
+    public Long getFollowedId() {
+        return followedId;
+    }
+
+    public void setFollowedId(Long followedId) {
+        this.followedId = followedId;
+    }
 }
