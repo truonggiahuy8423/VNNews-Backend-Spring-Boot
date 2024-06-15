@@ -9,16 +9,18 @@ public class UserInfoDTO {
     private Long postCount;
     private Long followingCount;
     private Long followedCount;
+    private Long loginUser;
     private boolean isFollowedByLoginUser;
     private byte[] avatar;
 
-    public UserInfoDTO(Long userId, String name, Integer role, Long postCount, Long followedCount, Long followingCount, boolean isFollowedByLoginUser, byte[] avatar) {
+    public UserInfoDTO(Long userId, String name, Integer role, Long postCount, Long followingCount, Long followedCount, Long loginUser, boolean isFollowedByLoginUser, byte[] avatar) {
         this.userId = userId;
         this.name = name;
         this.role = role;
         this.postCount = postCount;
-        this.followedCount = followedCount;
         this.followingCount = followingCount;
+        this.followedCount = followedCount;
+        this.loginUser = loginUser;
         this.isFollowedByLoginUser = isFollowedByLoginUser;
         this.avatar = avatar;
     }
@@ -69,6 +71,14 @@ public class UserInfoDTO {
 
     public void setFollowedCount(Long followedCount) {
         this.followedCount = followedCount;
+    }
+
+    public Long getLoginUser() {
+        return loginUser;
+    }
+
+    public void setLoginUser(Long loginUser) {
+        this.loginUser = loginUser;
     }
 
     public boolean getIsFollowedByLoginUser() {

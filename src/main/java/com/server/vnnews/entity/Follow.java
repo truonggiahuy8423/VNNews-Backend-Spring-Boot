@@ -23,4 +23,27 @@ public class Follow {
     private User followed;
 
     // Constructors, getters, and setters
+
+    public Follow() {}
+
+    public Follow(FollowId id, Date time) {
+        this.id = id;
+        this.time = time;
+    }
+
+    public FollowId getId() {
+        return id;
+    }
+
+    public void setId(FollowId id) {
+        this.id = id;
+    }
+
+    public Date getTime() {
+        return time;
+    }
+
+    public void setTime(Date time) {
+        this.time = time;
+    }
 }

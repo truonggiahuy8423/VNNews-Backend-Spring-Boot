@@ -32,7 +32,9 @@ public class SecurityConfig {
             "/get-articles-in-scroll-page",
             "/get-user-info",
             "/get-follow-followed",
-            "/get-follow-follower"
+            "/get-follow-follower",
+            "/follow-request",
+            "/unfollow-request"
     };
 
     @Bean

@@ -40,6 +40,7 @@ public class UserService {
                                                 postCount,
                                                 followedCount,
                                                 followingCount,
+                                                loginUserId,
                                                 isFollowedByLoginUser,
                                                 userInfo.getAvatar());
         return userInfoDTO;

@@ -16,9 +16,9 @@ public class FollowId implements Serializable {
     public FollowId() {
     }
 
-    public FollowId(Long followerId, Long followedId) {
-        this.followerId = followerId;
+    public FollowId(Long followedId, Long followerId) {
         this.followedId = followedId;
+        this.followerId = followerId;
     }
 
     public Long getFollowerId() {
