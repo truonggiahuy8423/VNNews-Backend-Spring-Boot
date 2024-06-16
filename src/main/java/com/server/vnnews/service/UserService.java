@@ -1,6 +1,7 @@
 package com.server.vnnews.service;
 
 import com.server.vnnews.dto.UserInfoDTO;
+import com.server.vnnews.dto.UserNavigationMenu;
 import com.server.vnnews.entity.Follow;
 import com.server.vnnews.entity.User;
 import com.server.vnnews.entity.composite.FollowId;
@@ -45,8 +46,10 @@ public class UserService {
                                                 userInfo.getAvatar());
         return userInfoDTO;
     }
-    public User getByUserId(){
-        return userRepository.findByUserId(Long.parseLong(String.valueOf("2")));
+    public UserNavigationMenu getByUserId(Long userId){
+        User user = userRepository.findByUserId(userId);
+        UserNavigationMenu userNavigationMenu = new UserNavigationMenu(user.getUserId(), user.getName(), user.getEmail(), user.getAvatar());
+        return userNavigationMenu;
     }
     public List<FollowId> getFollowByFollowed(){
         return followRepository.findByFollowerId(Long.parseLong(String.valueOf("2")));

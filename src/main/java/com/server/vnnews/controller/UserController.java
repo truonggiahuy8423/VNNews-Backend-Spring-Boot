@@ -2,6 +2,7 @@ package com.server.vnnews.controller;
 
 import com.server.vnnews.dto.ArticleScrollPageDTO;
 import com.server.vnnews.dto.UserInfoDTO;
+import com.server.vnnews.dto.UserNavigationMenu;
 import com.server.vnnews.entity.Follow;
 import com.server.vnnews.entity.User;
 import com.server.vnnews.entity.composite.FollowId;
@@ -50,4 +51,16 @@ public class UserController {
         return new ResponseEntity<>(userService.getFollowByFollower(), HttpStatus.OK);
     }
 
+    @GetMapping("/set-up-user-menu")
+    public ResponseEntity<UserNavigationMenu> getUserMenu(@RequestHeader("Authorization") String token){
+        String jwt = token.substring(7);
+        UserNavigationMenu userMenu;
+        try {
+            Long userIdFromToken = AuthenticationService.getUserIdFromToken(jwt);
+            userMenu = userService.getByUserId(userIdFromToken);
+        } catch (ParseException e) {
+            throw new AppRuntimeException(AppRuntimeException.AUTHENTICATION_FAILED_MESSAGE, AppRuntimeException.AUTHENTICATION_FAILED);
+        }
+        return new ResponseEntity<>(userMenu, HttpStatus.OK);
+    }
 }
