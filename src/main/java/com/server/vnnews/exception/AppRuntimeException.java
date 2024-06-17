@@ -9,6 +9,9 @@ public class AppRuntimeException extends RuntimeException {
     public static String UNKNOWN_ERROR_MESSAGE = "Unknown error";
 
 
+    public static int EMAIL_EXISTED= 4;
+    public static String EMAIL_EXISTED_MESSAGE = "Email đã đăng ký tài khoản khác";
+
     private int code;
     private String message;
 

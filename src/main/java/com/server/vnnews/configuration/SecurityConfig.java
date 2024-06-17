@@ -32,7 +32,7 @@ public class SecurityConfig {
         httpSecurity
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(HttpMethod.GET, PUBLIC_ENDPOINTS).permitAll()
-//                        .requestMatchers(HttpMethod.GET, "/api/article/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "api/article/like-comment").permitAll()
                         .requestMatchers(HttpMethod.POST, "api/auth/**").permitAll()
                         .anyRequest().authenticated()
                 )

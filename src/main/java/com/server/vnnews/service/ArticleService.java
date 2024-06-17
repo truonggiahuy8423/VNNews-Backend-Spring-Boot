@@ -3,6 +3,7 @@ package com.server.vnnews.service;
 import com.server.vnnews.common.FilterType;
 import com.server.vnnews.dto.*;
 import com.server.vnnews.entity.*;
+import com.server.vnnews.entity.composite.ArticleCategoryId;
 import com.server.vnnews.entity.composite.LikeCommentId;
 import com.server.vnnews.exception.AppRuntimeException;
 import com.server.vnnews.exception.DatabaseException;
@@ -14,15 +15,12 @@ import com.server.vnnews.dto.NewsFeedArticleDTO;
 import com.server.vnnews.entity.Article;
 import com.server.vnnews.repository.ArticleRepository;
 import com.server.vnnews.repository.BodyItemRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
+import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -223,25 +221,18 @@ public class ArticleService {
     public LikeCommentDTO saveLikeComment(LikeCommentDTO likeCommentDTO) {
         LikeComment likeComment = new LikeComment();
 
-        // Đặt thời gian tạo và sửa đổi
         likeComment.setTime(likeCommentDTO.getTime());
+        likeComment.setId(new LikeCommentId(likeCommentDTO.getUserId(), likeCommentDTO.getCommentId()));
+        likeComment.setComment(commentRepository.findCommentByCommentId(likeCommentDTO.getCommentId()));
+        likeComment.setUser(userRepository.findByUserId(likeCommentDTO.getUserId()));
 
-        // Tạo một đối tượng Article chỉ bằng cách đặt articleId
-        Comment comment = new Comment();
-        comment.setCommentId(likeCommentDTO.getCommentId()); // Giả sử articleId là thuộc tính trong UserCommentDTO
-
-        User user = new User();
-        user.setUserId(likeCommentDTO.getUserId()); // Giả sử articleId là thuộc tính trong UserCommentDTO
-
-        // Gán đối tượng Article cho comment
-        likeComment.setComment(comment);
-        likeComment.setUser(user);
-
-
-        LikeComment insertedLikeComment = null;
         try {
-            insertedLikeComment = likeCommentRepository.save(likeComment);
-            // Hãy bỏ dữ liệu từ Comment sang commentDTO
+            LikeComment insertedLikeComment = likeCommentRepository.save(likeComment);
+            if (insertedLikeComment == null) {
+                throw new RuntimeException("Inserted LikeComment is null");
+            }
+            System.out.println("inserted:" + insertedLikeComment.getId().getCommentId());
+
             LikeCommentDTO commentDTO = new LikeCommentDTO();
             commentDTO.setCommentId(insertedLikeComment.getId().getCommentId());
             commentDTO.setUserId(insertedLikeComment.getId().getUserId());
@@ -254,6 +245,7 @@ public class ArticleService {
             throw new AppRuntimeException(e.getMessage(), AppRuntimeException.UNKNOWN_ERROR);
         }
     }
+
 
     @Transactional
     public LikeCommentDTO unlikeComment(LikeCommentDTO likeCommentDTO) {
@@ -272,5 +264,59 @@ public class ArticleService {
     public List<Category> getAllCategories() {
         return categoryRepository.findAll();
     }
+
+    @Transactional
+    public Long postArticle(PostArticleRequestDTO articleDTO) {
+        System.out.println(articleDTO);
+        Article article = new Article();
+
+        article.setArticleId(articleDTO.getArticleId());
+        article.setCreateTime(articleDTO.getCreateTime());
+        article.setModifyTime(articleDTO.getModifyTime());
+        article.setDescription(articleDTO.getDescription());
+        article.setTitle(articleDTO.getTitle());
+
+        User u = new User();
+        u.setUserId(articleDTO.getUserId());
+        article.setUser(u);
+
+
+        // Assuming you have a utility to convert String to byte[] for the thumbnail
+        article.setThumbnail(convertThumbnailStringToBytes(articleDTO.getThumbnail()));
+        article.setThumbnailName(articleDTO.getThumbnailName());
+
+        try {
+            article = articleRepository.save(article);
+            List<Category> categories = articleDTO.getCategories();
+            for (int i = 0; i<categories.size();i++) {
+                ArticleCategory ac = new ArticleCategory();
+                ac.setId(new ArticleCategoryId(article.getArticleId(), categories.get(i).getCategoryId()));
+                ac.setArticle(articleRepository.findArticleByArticleId(article.getArticleId()));
+                ac.setCategory(categoryRepository.findCategoryByCategoryId(categories.get(i).getCategoryId()));
+                articleCategoryRepository.save(ac);
+            }
+
+            List<BodyItemRequest> items = articleDTO.getBodyItemList();
+            for (int i = 0; i<items.size();i++) {
+                BodyItemRequest itemRequest = items.get(i);
+                BodyItem item = new BodyItem(null, itemRequest.getImageName(), convertThumbnailStringToBytes(itemRequest.getDataImage()), itemRequest.getContent(), itemRequest.getOrdinalNumber(), itemRequest.getBodyTitle(), article) ;
+                bodyItemRepository.save(item);
+            }
+        } catch (DataIntegrityViolationException e) {
+            throw new DatabaseException(e.getMessage(), DatabaseException.DATA_INTEGRITY_VIOLATION);
+        } catch (Exception e) {
+            throw new AppRuntimeException(e.getMessage(), AppRuntimeException.UNKNOWN_ERROR);
+        }
+        return article.getArticleId();
+    }
+
+    private byte[] convertThumbnailStringToBytes(String thumbnail) {
+        // Loại bỏ bất kỳ ký tự không hợp lệ nào từ chuỗi Base64
+        String cleanThumbnail = thumbnail.replaceAll("[^A-Za-z0-9+/=]", "");
+
+        // Giải mã chuỗi Base64 đã được làm sạch
+        return Base64.getDecoder().decode(cleanThumbnail);
+    }
+
 
 }

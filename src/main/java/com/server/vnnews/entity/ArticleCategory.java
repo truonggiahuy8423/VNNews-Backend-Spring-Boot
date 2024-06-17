@@ -14,15 +14,27 @@ public class ArticleCategory {
     // Relation "Many"
     @JsonIgnore
     @ManyToOne
+    @MapsId("articleId")  // Đây là quan trọng để ánh xạ chính xác composite key
     @JoinColumn(name = "article_id", insertable = false, updatable = false)
     private Article article;
 
     @ManyToOne
     @JsonIgnore
+    @MapsId("categoryId")  // Đây là quan trọng để ánh xạ chính xác composite key
     @JoinColumn(name = "category_id", insertable = false, updatable = false)
     private Category category;
 
     // Constructors, getters, and setters
+
+
+    public ArticleCategory() {
+    }
+
+    public ArticleCategory(ArticleCategoryId id, Article article, Category category) {
+        this.id = id;
+        this.article = article;
+        this.category = category;
+    }
 
     public ArticleCategoryId getId() {
         return id;

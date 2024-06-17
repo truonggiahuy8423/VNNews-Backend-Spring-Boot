@@ -31,4 +31,5 @@ public class AuthenticationController {
         return new ResponseEntity<>(authenticationService.register(user), HttpStatus.OK);
     }
 
+
 }

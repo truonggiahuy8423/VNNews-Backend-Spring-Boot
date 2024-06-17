@@ -9,5 +9,5 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface CategoryRepository extends JpaRepository<Category, Long> {
-
+    public Category findCategoryByCategoryId(Long categoryId);
 }

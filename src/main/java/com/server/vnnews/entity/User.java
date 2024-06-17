@@ -36,7 +36,6 @@ public class User {
     private Boolean gender;
 
     @Lob
-    @JsonIgnore
     @Column(name = "avatar")
     private byte[] avatar;
 

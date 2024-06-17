@@ -11,5 +11,13 @@ public class ArticleCategoryId implements Serializable {
     @Column(name = "category_id")
     private Long categoryId;
 
+    public ArticleCategoryId() {
+    }
+
+    public ArticleCategoryId(Long articleId, Long categoryId) {
+        this.articleId = articleId;
+        this.categoryId = categoryId;
+    }
+
     // Constructors, getters, and setters
 }

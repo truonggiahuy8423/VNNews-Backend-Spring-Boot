@@ -1,7 +1,6 @@
 package com.server.vnnews.controller;
 
 import com.server.vnnews.dto.*;
-import com.server.vnnews.entity.Article;
 import com.server.vnnews.entity.Category;
 import com.server.vnnews.exception.AppRuntimeException;
 import com.server.vnnews.service.ArticleService;
@@ -83,6 +82,19 @@ public class ArticleController {
         return new ResponseEntity<>(service.postComment(commentPostingRequest), HttpStatus.OK);
     }
 
+    @PostMapping("api/article/post-article")
+    public ResponseEntity<PostArticleResponse> postArticle(@RequestBody PostArticleRequestDTO articleDTO, @RequestHeader("Authorization") String token) {
+        String jwt = token.substring(7);
+        try {
+            Long userIdFromToken = AuthenticationService.getUserIdFromToken(jwt);
+            articleDTO.setUserId(userIdFromToken);
+            System.out.println(userIdFromToken);
+        } catch (ParseException e) {
+            throw new AppRuntimeException(AppRuntimeException.AUTHENTICATION_FAILED_MESSAGE, AppRuntimeException.AUTHENTICATION_FAILED);
+        }
+        return  new ResponseEntity<>(new PostArticleResponse(service.postArticle(articleDTO), articleDTO.rvPosition), HttpStatus.OK);
+    }
+
     @GetMapping("/get-articles-in-scroll-page")
     public ResponseEntity<List<ArticleScrollPageDTO>> getArticlesInScrollPage(@RequestParam(value = "page_index", required = true) int pageIndex,
                                                                               @RequestHeader("Authorization") String token) {
@@ -107,7 +119,10 @@ public class ArticleController {
         } catch (ParseException e) {
             throw new AppRuntimeException(AppRuntimeException.AUTHENTICATION_FAILED_MESSAGE, AppRuntimeException.AUTHENTICATION_FAILED);
         }
-        return new ResponseEntity<>(service.saveLikeComment(likeCommentDTO), HttpStatus.OK);
+        System.out.println(likeCommentDTO.getCommentId());
+        LikeCommentDTO result = service.saveLikeComment(likeCommentDTO);
+        System.out.println(result.getSuccess());
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @PostMapping("api/article/unlike-comment")
@@ -120,7 +135,10 @@ public class ArticleController {
         } catch (ParseException e) {
             throw new AppRuntimeException(AppRuntimeException.AUTHENTICATION_FAILED_MESSAGE, AppRuntimeException.AUTHENTICATION_FAILED);
         }
-        return new ResponseEntity<>(service.unlikeComment(likeCommentDTO), HttpStatus.OK);
+        System.out.println(likeCommentDTO.getCommentId());
+        LikeCommentDTO result = service.unlikeComment(likeCommentDTO);
+        System.out.println(result.getSuccess());
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @GetMapping("/api/article/get-all-categories")

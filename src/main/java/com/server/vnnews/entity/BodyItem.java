@@ -1,5 +1,6 @@
 package com.server.vnnews.entity;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 
 @Entity
@@ -10,20 +11,25 @@ public class BodyItem {
     @Column(name = "body_item_id", columnDefinition = "BIGINT")
     private Long bodyItemId;
 
+    @Nullable
     @Column(name = "image_name",columnDefinition = "TEXT")
     private String imageName;
 
+    @Nullable
     @Lob
     @Column(name = "data_image")
     private byte[] dataImage;
 
+    @Nullable
     @Lob
     @Column(name = "content", columnDefinition = "TEXT")
     private String content;
 
+
     @Column(name="ordinal_number")
     private Integer ordinalNumber;
 
+    @Nullable
     @Column(name="body_title", columnDefinition = "TEXT")
     private String bodyTitle;
 
@@ -43,6 +49,16 @@ public class BodyItem {
         this.content = content;
         this.ordinalNumber = ordinalNumber;
         this.bodyTitle = bodyTitle;
+    }
+
+    public BodyItem(Long bodyItemId, String imageName, byte[] dataImage, String content, Integer ordinalNumber, String bodyTitle, Article a) {
+        this.bodyItemId = bodyItemId;
+        this.imageName = imageName;
+        this.dataImage = dataImage;
+        this.content = content;
+        this.ordinalNumber = ordinalNumber;
+        this.bodyTitle = bodyTitle;
+        this.article = a;
     }
 
     public Long getBodyItemId() {

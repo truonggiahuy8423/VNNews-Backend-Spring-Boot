@@ -8,6 +8,7 @@ import com.nimbusds.jwt.SignedJWT;
 import com.server.vnnews.configuration.JwtConfig;
 import com.server.vnnews.dto.AuthenticationRequest;
 import com.server.vnnews.dto.AuthenticationResponse;
+import com.server.vnnews.entity.BodyItem;
 import com.server.vnnews.entity.User;
 import com.server.vnnews.exception.AppRuntimeException;
 import com.server.vnnews.repository.UserRepository;
@@ -57,6 +58,8 @@ public class AuthenticationService {
         return Integer.valueOf(signedJWT.getJWTClaimsSet().getClaim("role").toString());
     }
 // Thay bằng secret key thực tế của bạn
+
+
 
     public static String generateToken(User user) throws JOSEException {
         JWSSigner signer = new MACSigner(JwtConfig.getSecretKey());

@@ -18,6 +18,8 @@ import java.util.List;
 
 @Repository
 public interface ArticleRepository extends JpaRepository<Article, Long> {
+    public Article findArticleByArticleId(Long articleId);
+
     @Query("SELECT new com.server.vnnews.dto.NewsFeedArticleDTO(" +
             "a.articleId, a.title, a.description, a.thumbnail, a.thumbnailName, a.createTime, a.modifyTime, " +
             "COUNT(v), COUNT(c), u.userId, u.name, u.avatar, COUNT(f), COUNT(fa)) " +

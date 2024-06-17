@@ -16,10 +16,12 @@ public class LikeComment {
 
     // Relation "Many"
     @ManyToOne
+    @MapsId("userId")  // Đây là quan trọng để ánh xạ chính xác composite key
     @JoinColumn(name = "user_id", insertable = false, updatable = false)
     private User user;
 
     @ManyToOne
+    @MapsId("commentId")  // Đây là quan trọng để ánh xạ chính xác composite key
     @JoinColumn(name = "comment_id", insertable = false, updatable = false)
     private Comment comment;
 
