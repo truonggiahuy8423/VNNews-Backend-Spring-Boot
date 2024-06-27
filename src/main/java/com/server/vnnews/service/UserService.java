@@ -25,7 +25,7 @@ public class UserService {
     }
 
     public UserDTO getUserById2(Long userId) {
-        return  userRepository.findByUserId2(userId);
+        return  userRepository.findByUserId2(userId); }
     @Autowired
     private ArticleRepository articleRepository;
     @Autowired
