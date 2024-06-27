@@ -1,8 +1,5 @@
 package com.server.vnnews.repository;
-import com.server.vnnews.dto.ArticleInReadingPageDTO;
-import com.server.vnnews.dto.ArticleScrollPageDTO;
-import com.server.vnnews.dto.NewsFeedArticleDTO;
-import com.server.vnnews.dto.UserCommentDTO;
+import com.server.vnnews.dto.*;
 import com.server.vnnews.entity.Article;
 import com.server.vnnews.entity.Comment;
 import org.springframework.data.domain.Pageable;
@@ -140,4 +137,19 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
     List<ArticleScrollPageDTO> getArticlesScrollPage(Pageable pageable);
 
 
+    @Query("SELECT new com.server.vnnews.dto.ArticleUserInfoDTO(" +
+            "a.articleId, a.title, a.createTime, a.modifyTime, " +
+            "COUNT(v), u.userId, a.thumbnail) " +
+            "FROM Article a " +
+            "LEFT JOIN a.views v " +
+            "LEFT JOIN a.user u " +
+            "Where u.userId = :userId " +
+            "GROUP BY a.articleId, a.title, a.createTime, a.modifyTime, u.userId, a.thumbnail")
+    List<ArticleUserInfoDTO> getArticlesUserInfo(@Param("userId") Long userId, Pageable pageable);
+
+    @Query("SELECT Count(a.articleId)" +
+            "From Article a " +
+            "LEFT JOIN a.user u " +
+            "Where u.userId= :userId")
+    Long getNoPostByUserId(@Param("userId") Long userId);
 }

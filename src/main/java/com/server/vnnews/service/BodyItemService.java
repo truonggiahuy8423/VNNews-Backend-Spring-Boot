@@ -14,9 +14,8 @@ public class BodyItemService {
     @Autowired
     private BodyItemRepository bodyItemRepository;
 
-
     public List<BodyItem> getBodyItemByArticleId(Long articleId){
-        return bodyItemRepository.findByArticleId(articleId);
+        return bodyItemRepository.getArticleBodyItemsByArticleId(articleId);
     }
 
 }

@@ -209,7 +209,7 @@ public class ArticleService {
         Pageable pageable =  PageRequest.of(pageIndex - 1, 5); // pageIndex - 1 vì Spring Data JPA sử dụng chỉ mục trang từ 0
         List<ArticleScrollPageDTO> articleScrollPageDTOList = articleRepository.getArticlesScrollPage(pageable);
         return articleScrollPageDTOList.stream().map(dto -> {
-            List<BodyItemDTO> bodyItemDTOList = bodyItemRepository.findByArticleId(dto.getArticleId()).stream()
+            List<BodyItemDTO> bodyItemDTOList = bodyItemRepository.getArticleBodyItemsByArticleId(dto.getArticleId()).stream()
                     .map(bodyItem -> new BodyItemDTO(bodyItem.getBodyItemId(), null, bodyItem.getContent(), null , bodyItem.getBodyTitle(), bodyItem.getOrdinalNumber()))
                     .collect(Collectors.toList());
             dto.setBodyItemList(bodyItemDTOList);
@@ -319,4 +319,8 @@ public class ArticleService {
     }
 
 
+    public List<ArticleUserInfoDTO> getArticlesUserInfo(Long userId, int pageIndex){
+        Pageable pageable =  PageRequest.of(pageIndex - 1, 10);
+        return articleRepository.getArticlesUserInfo(userId, pageable);
+    }
 }

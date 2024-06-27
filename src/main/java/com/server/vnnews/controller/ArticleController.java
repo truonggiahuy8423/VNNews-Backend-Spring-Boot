@@ -147,4 +147,17 @@ public class ArticleController {
         return new ResponseEntity<>(categories, HttpStatus.OK);
     }
 
+
+    @GetMapping("/get-articles-in-user-info")
+    public ResponseEntity<List<ArticleUserInfoDTO>> getArticlesUserInfo(@RequestParam(value = "userId", required = true) Long userId,
+                                                        @RequestParam(value = "page_index", required = true) int pageIndex,
+                                                        @RequestHeader("Authorization") String token){
+        String jwt = token.substring(7);
+        try {
+            Long userIdFromToken = AuthenticationService.getUserIdFromToken(jwt);
+        } catch (ParseException e) {
+            throw new AppRuntimeException(AppRuntimeException.AUTHENTICATION_FAILED_MESSAGE, AppRuntimeException.AUTHENTICATION_FAILED);
+        }
+        return new ResponseEntity<>(service.getArticlesUserInfo(userId, pageIndex), HttpStatus.OK);
+    }
 }

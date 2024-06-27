@@ -24,7 +24,18 @@ import javax.crypto.spec.SecretKeySpec;
 @EnableMethodSecurity
 public class SecurityConfig {
     private final String[] PUBLIC_ENDPOINTS = {
-            "/users", "/auth/introspect", "/auth/logout","/get-scroll-body-item", "/test-get-body-item", "/get-articles-in-scroll-page"
+            "/users",
+            "/auth/introspect",
+            "/auth/logout",
+            "/get-scroll-body-item",
+            "/test-get-body-item",
+            "/get-articles-in-scroll-page",
+            "/get-user-info",
+            "/get-follow-followed",
+            "/get-follow-follower",
+            "/follow-request",
+            "/unfollow-request",
+            "/set-up-user-menu"
     };
 
     @Bean

@@ -2,6 +2,12 @@ package com.server.vnnews.controller;
 
 import com.server.vnnews.dto.UserDTO;
 import com.server.vnnews.entity.User;
+import com.server.vnnews.dto.ArticleScrollPageDTO;
+import com.server.vnnews.dto.UserInfoDTO;
+import com.server.vnnews.dto.UserNavigationMenu;
+import com.server.vnnews.entity.Follow;
+import com.server.vnnews.entity.User;
+import com.server.vnnews.entity.composite.FollowId;
 import com.server.vnnews.exception.AppRuntimeException;
 import com.server.vnnews.service.AuthenticationService;
 import com.server.vnnews.service.UserService;
@@ -44,4 +50,43 @@ public class UserController {
         return new ResponseEntity<>(userService.getUserById2(userIdFromToken), HttpStatus.OK);
     }
 
+    @GetMapping("/get-user-info")
+    public ResponseEntity<UserInfoDTO> getUserInfo(@RequestParam(value = "userId", required = true) Long userId,
+                                                   @RequestHeader("Authorization") String token){
+        String jwt = token.substring(7);
+        UserInfoDTO userInfoDTO;
+        try {
+            Long userIdFromToken = AuthenticationService.getUserIdFromToken(jwt);
+            userInfoDTO = userService.getUserInfo(userId, userIdFromToken);
+//            System.out.println(userInfoDTO.getIsFollowedByLoginUser());
+            System.out.println(userIdFromToken);
+        } catch (ParseException e) {
+            throw new AppRuntimeException(AppRuntimeException.AUTHENTICATION_FAILED_MESSAGE, AppRuntimeException.AUTHENTICATION_FAILED);
+        }
+        System.out.print("Controller getIsFollowedByLoginUser : ");
+        System.out.println(userInfoDTO.getIsFollowedByLoginUser());
+        return new ResponseEntity<>(userInfoDTO, HttpStatus.OK);
+    }
+    @GetMapping("/get-follow-followed")
+    public ResponseEntity<List<FollowId>> getFollowByFollowed(){
+        return new ResponseEntity<>(userService.getFollowByFollowed(), HttpStatus.OK);
+    }
+
+    @GetMapping("/get-follow-follower")
+    public ResponseEntity<List<FollowId>> getFollowByFollower(){
+        return new ResponseEntity<>(userService.getFollowByFollower(), HttpStatus.OK);
+    }
+
+    @GetMapping("/set-up-user-menu")
+    public ResponseEntity<UserNavigationMenu> getUserMenu(@RequestHeader("Authorization") String token){
+        String jwt = token.substring(7);
+        UserNavigationMenu userMenu;
+        try {
+            Long userIdFromToken = AuthenticationService.getUserIdFromToken(jwt);
+            userMenu = userService.getByUserId(userIdFromToken);
+        } catch (ParseException e) {
+            throw new AppRuntimeException(AppRuntimeException.AUTHENTICATION_FAILED_MESSAGE, AppRuntimeException.AUTHENTICATION_FAILED);
+        }
+        return new ResponseEntity<>(userMenu, HttpStatus.OK);
+    }
 }
