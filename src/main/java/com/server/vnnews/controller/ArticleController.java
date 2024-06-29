@@ -160,4 +160,10 @@ public class ArticleController {
         }
         return new ResponseEntity<>(service.getArticlesUserInfo(userId, pageIndex), HttpStatus.OK);
     }
+
+
+    @GetMapping("/api/article/search")
+    public List<Article> searchArticles(@RequestParam("q") String keyword) {
+        return articleService.searchArticles(keyword);
+    }
 }

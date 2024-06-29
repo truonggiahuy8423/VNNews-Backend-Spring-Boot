@@ -323,4 +323,9 @@ public class ArticleService {
         Pageable pageable =  PageRequest.of(pageIndex - 1, 10);
         return articleRepository.getArticlesUserInfo(userId, pageable);
     }
+
+     public List<Article> searchArticles(String keyword) {
+        String lowercaseKeyword = keyword.toLowerCase(); // Chuyển đổi từ khóa tìm kiếm thành chữ thường
+        return articleRepository.searchByTitleOrDescription(lowercaseKeyword);
+    }
 }
