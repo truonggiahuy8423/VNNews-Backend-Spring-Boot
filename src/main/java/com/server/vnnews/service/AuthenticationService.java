@@ -93,4 +93,14 @@ public class AuthenticationService {
             throw new AppRuntimeException(AppRuntimeException.EMAIL_EXISTED_MESSAGE, AppRuntimeException.EMAIL_EXISTED);
         }
     }
+    public Integer validateLogin(AuthenticationRequest request){
+        User user = userRepository.findByEmail(request.getEmail());
+        if (user == null) {
+            return 2;
+        }
+        if(user.getPassword().equals(request.getPassword()) == false){
+            return 3;
+        }
+        return 1;
+    }
 }
