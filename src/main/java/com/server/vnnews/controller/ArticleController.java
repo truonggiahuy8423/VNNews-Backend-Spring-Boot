@@ -60,8 +60,14 @@ public class ArticleController {
 //    }
 
     @GetMapping("api/article/get-article-by-id")
-    public ResponseEntity<ArticleInReadingPageDTO> getArticleById(@RequestParam(value = "article_id", required = true) long articleId) {
-        return new ResponseEntity<>(service.getArticleById(articleId), HttpStatus.OK);
+    public ResponseEntity<ArticleInReadingPageDTO> getArticleById(@RequestParam(value = "article_id", required = true) long articleId, @RequestHeader("Authorization") String token) {
+        String jwt = token.substring(7);
+        try {
+            Long userIdFromToken = AuthenticationService.getUserIdFromToken(jwt);
+            return new ResponseEntity<>(service.getArticleById(articleId, userIdFromToken), HttpStatus.OK);
+        } catch (ParseException e) {
+            throw new AppRuntimeException(AppRuntimeException.AUTHENTICATION_FAILED_MESSAGE, AppRuntimeException.AUTHENTICATION_FAILED);
+        }
     }
 
     @GetMapping("api/article/get-comments-by-article-id")
@@ -159,5 +165,51 @@ public class ArticleController {
             throw new AppRuntimeException(AppRuntimeException.AUTHENTICATION_FAILED_MESSAGE, AppRuntimeException.AUTHENTICATION_FAILED);
         }
         return new ResponseEntity<>(service.getArticlesUserInfo(userId, pageIndex), HttpStatus.OK);
+    }
+
+    @PostMapping("/api/article/save-bookmark")
+    public ResponseEntity<BookmarkRequest> saveBookmark(@RequestBody BookmarkRequest request, @RequestHeader("Authorization") String token) {
+        String jwt = token.substring(7);
+        try {
+            Long userIdFromToken = AuthenticationService.getUserIdFromToken(jwt);
+            request.setUserId(userIdFromToken);
+            return new ResponseEntity<>(service.saveBookmark(request), HttpStatus.OK);
+        } catch (ParseException e) {
+            throw new AppRuntimeException(AppRuntimeException.AUTHENTICATION_FAILED_MESSAGE, AppRuntimeException.AUTHENTICATION_FAILED);
+        }
+    }
+    @PostMapping("/api/article/abort-bookmark")
+    public ResponseEntity<BookmarkRequest> abortBookmark(@RequestBody BookmarkRequest request, @RequestHeader("Authorization") String token) {
+        String jwt = token.substring(7);
+        try {
+            Long userIdFromToken = AuthenticationService.getUserIdFromToken(jwt);
+            request.setUserId(userIdFromToken);
+            return new ResponseEntity<>(service.abortBookmark(request), HttpStatus.OK);
+        } catch (ParseException e) {
+            throw new AppRuntimeException(AppRuntimeException.AUTHENTICATION_FAILED_MESSAGE, AppRuntimeException.AUTHENTICATION_FAILED);
+        }
+    }
+
+    @PostMapping("/api/article/save-see-later")
+    public ResponseEntity<BookmarkRequest> saveSeeLater(@RequestBody BookmarkRequest request, @RequestHeader("Authorization") String token) {
+        String jwt = token.substring(7);
+        try {
+            Long userIdFromToken = AuthenticationService.getUserIdFromToken(jwt);
+            request.setUserId(userIdFromToken);
+            return new ResponseEntity<>(service.saveSeeLater(request), HttpStatus.OK);
+        } catch (ParseException e) {
+            throw new AppRuntimeException(AppRuntimeException.AUTHENTICATION_FAILED_MESSAGE, AppRuntimeException.AUTHENTICATION_FAILED);
+        }
+    }
+    @PostMapping("/api/article/abort-see-later")
+    public ResponseEntity<BookmarkRequest> abortSeeLater(@RequestBody BookmarkRequest request, @RequestHeader("Authorization") String token) {
+        String jwt = token.substring(7);
+        try {
+            Long userIdFromToken = AuthenticationService.getUserIdFromToken(jwt);
+            request.setUserId(userIdFromToken);
+            return new ResponseEntity<>(service.abortSeeLater(request), HttpStatus.OK);
+        } catch (ParseException e) {
+            throw new AppRuntimeException(AppRuntimeException.AUTHENTICATION_FAILED_MESSAGE, AppRuntimeException.AUTHENTICATION_FAILED);
+        }
     }
 }

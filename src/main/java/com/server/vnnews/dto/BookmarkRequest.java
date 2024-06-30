@@ -1,24 +1,16 @@
-package com.server.vnnews.entity.composite;
-import jakarta.persistence.*;
-import java.io.Serializable;
+package com.server.vnnews.dto;
 
-@Embeddable
-public class FavoriteId implements Serializable {
+import java.util.Date;
 
-    @Column(name = "user_id")
+public class BookmarkRequest {
     private Long userId;
-
-    @Column(name = "article_id")
     private Long articleId;
+    private Date time;
 
-    // Constructors, getters, and setters
-
-    public FavoriteId() {
-    }
-
-    public FavoriteId(Long userId, Long articleId) {
+    public BookmarkRequest(Long userId, Long articleId, Date time) {
         this.userId = userId;
         this.articleId = articleId;
+        this.time = time;
     }
 
     public Long getUserId() {
@@ -35,5 +27,13 @@ public class FavoriteId implements Serializable {
 
     public void setArticleId(Long articleId) {
         this.articleId = articleId;
+    }
+
+    public Date getTime() {
+        return time;
+    }
+
+    public void setTime(Date time) {
+        this.time = time;
     }
 }

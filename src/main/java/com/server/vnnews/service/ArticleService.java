@@ -4,7 +4,9 @@ import com.server.vnnews.common.FilterType;
 import com.server.vnnews.dto.*;
 import com.server.vnnews.entity.*;
 import com.server.vnnews.entity.composite.ArticleCategoryId;
+import com.server.vnnews.entity.composite.FavoriteId;
 import com.server.vnnews.entity.composite.LikeCommentId;
+import com.server.vnnews.entity.composite.SeeLaterId;
 import com.server.vnnews.exception.AppRuntimeException;
 import com.server.vnnews.exception.DatabaseException;
 import com.server.vnnews.repository.*;
@@ -46,9 +48,14 @@ public class ArticleService {
     @Autowired
     private CategoryRepository categoryRepository;
 
-
     @Autowired
     private ArticleCategoryRepository articleCategoryRepository;
+
+    @Autowired
+    private FavoriteRepository favoriteRepository;
+
+    @Autowired
+    private SeeLaterRepository seeLaterRepository;
 
     public List<NewsFeedArticleDTO> getArticlesInNewsFeed(int pageIndex, Long categoryId, int filterType) {
         Pageable pageable = PageRequest.of(pageIndex - 1, 10); // pageIndex - 1 vì Spring Data JPA sử dụng chỉ mục trang từ 0
@@ -131,11 +138,17 @@ public class ArticleService {
     }
 
 
-    public ArticleInReadingPageDTO getArticleById(Long articleId) {
+    public ArticleInReadingPageDTO getArticleById(Long articleId, Long userId) {
         ArticleInReadingPageDTO article = new ArticleInReadingPageDTO(
                 articleRepository.getArticleById(articleId),
                 bodyItemRepository.getArticleBodyItemsByArticleId(articleId),
-                articleCategoryRepository.getArticleCategoriesByArticleId(articleId));
+                articleCategoryRepository.getArticleCategoriesByArticleId(articleId),
+                favoriteRepository.findById(new FavoriteId(userId, articleId)).isPresent() ? 1 : 0,
+                seeLaterRepository.findById(new SeeLaterId(userId, articleId)).isPresent() ? 1 : 0
+        );
+
+
+        System.out.println(article.getIsSaved() + " " + article.getIsSeeLater());
 
         return article;
     }
@@ -322,5 +335,95 @@ public class ArticleService {
     public List<ArticleUserInfoDTO> getArticlesUserInfo(Long userId, int pageIndex){
         Pageable pageable =  PageRequest.of(pageIndex - 1, 10);
         return articleRepository.getArticlesUserInfo(userId, pageable);
+    }
+
+    public BookmarkRequest saveBookmark(BookmarkRequest request) {
+        Favorite favorite = new Favorite();
+
+        favorite.setTime(request.getTime());
+        favorite.setId(new FavoriteId(request.getUserId(), request.getArticleId()));
+        favorite.setArticle(articleRepository.findArticleByArticleId(request.getArticleId()));
+        favorite.setUser(userRepository.findByUserId(request.getUserId()));
+
+        try {
+            Favorite inserted = favoriteRepository.save(favorite);
+            if (inserted == null) {
+                throw new RuntimeException("Inserted favorite is null");
+            }
+
+            request.setArticleId(inserted.getId().getArticleId());
+            request.setUserId(inserted.getId().getUserId());
+            request.setTime(inserted.getTime());
+
+            return request;
+        } catch (DataIntegrityViolationException e) {
+            throw new DatabaseException(e.getMessage(), DatabaseException.DATA_INTEGRITY_VIOLATION);
+        } catch (Exception e) {
+            throw new AppRuntimeException(e.getMessage(), AppRuntimeException.UNKNOWN_ERROR);
+        }
+    }
+
+    public BookmarkRequest abortBookmark(BookmarkRequest request) {
+        Favorite favorite = new Favorite();
+
+        favorite.setTime(request.getTime());
+        favorite.setId(new FavoriteId(request.getUserId(), request.getArticleId()));
+        favorite.setArticle(articleRepository.findArticleByArticleId(request.getArticleId()));
+        favorite.setUser(userRepository.findByUserId(request.getUserId()));
+
+        try {
+            favoriteRepository.deleteById(favorite.getId());
+
+            return request;
+        } catch (DataIntegrityViolationException e) {
+            throw new DatabaseException(e.getMessage(), DatabaseException.DATA_INTEGRITY_VIOLATION);
+        } catch (Exception e) {
+            throw new AppRuntimeException(e.getMessage(), AppRuntimeException.UNKNOWN_ERROR);
+        }
+    }
+
+    public BookmarkRequest saveSeeLater(BookmarkRequest request) {
+        SeeLater seeLater = new SeeLater();
+
+        seeLater.setTime(request.getTime());
+        seeLater.setId(new SeeLaterId(request.getUserId(), request.getArticleId()));
+        seeLater.setArticle(articleRepository.findArticleByArticleId(request.getArticleId()));
+        seeLater.setUser(userRepository.findByUserId(request.getUserId()));
+
+        try {
+            SeeLater inserted = seeLaterRepository.save(seeLater);
+            if (inserted == null) {
+                throw new RuntimeException("Inserted favorite is null");
+            }
+
+            request.setArticleId(inserted.getId().getArticleId());
+            request.setUserId(inserted.getId().getUserId());
+            request.setTime(inserted.getTime());
+
+            return request;
+        } catch (DataIntegrityViolationException e) {
+            throw new DatabaseException(e.getMessage(), DatabaseException.DATA_INTEGRITY_VIOLATION);
+        } catch (Exception e) {
+            throw new AppRuntimeException(e.getMessage(), AppRuntimeException.UNKNOWN_ERROR);
+        }
+    }
+
+    public BookmarkRequest abortSeeLater(BookmarkRequest request) {
+        SeeLater seeLater = new SeeLater();
+
+        seeLater.setTime(request.getTime());
+        seeLater.setId(new SeeLaterId(request.getUserId(), request.getArticleId()));
+        seeLater.setArticle(articleRepository.findArticleByArticleId(request.getArticleId()));
+        seeLater.setUser(userRepository.findByUserId(request.getUserId()));
+
+        try {
+            seeLaterRepository.deleteById(seeLater.getId());
+
+            return request;
+        } catch (DataIntegrityViolationException e) {
+            throw new DatabaseException(e.getMessage(), DatabaseException.DATA_INTEGRITY_VIOLATION);
+        } catch (Exception e) {
+            throw new AppRuntimeException(e.getMessage(), AppRuntimeException.UNKNOWN_ERROR);
+        }
     }
 }
