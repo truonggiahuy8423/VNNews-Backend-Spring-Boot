@@ -93,5 +93,32 @@ public class Notification {
     @JoinColumn(name = "commment_id")
     private Comment comment;
 
+    @Column(name = "is_seen")
+    private Integer isSeen;
+
+
     // Constructors, getters, and setters
+
+
+    public Integer getIsSeen() {
+        return isSeen;
+    }
+
+    public void setIsSeen(Integer isSeen) {
+        this.isSeen = isSeen;
+    }
+
+    public Notification() {
+    }
+
+    public Notification(Long notificationId, Date time, String content, User user, NotificationType notificationType, Article article, Comment comment, Integer isSeen) {
+        this.notificationId = notificationId;
+        this.time = time;
+        this.content = content;
+        this.user = user;
+        this.notificationType = notificationType;
+        this.article = article;
+        this.comment = comment;
+        this.isSeen = isSeen;
+    }
 }
