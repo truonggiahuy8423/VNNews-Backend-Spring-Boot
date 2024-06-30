@@ -222,5 +222,9 @@ public class ArticleController {
         } catch (ParseException e) {
             throw new AppRuntimeException(AppRuntimeException.AUTHENTICATION_FAILED_MESSAGE, AppRuntimeException.AUTHENTICATION_FAILED);
         }
+
+    @GetMapping("/api/article/search")
+    public List<Article> searchArticles(@RequestParam("q") String keyword) {
+        return articleService.searchArticles(keyword);
     }
 }
