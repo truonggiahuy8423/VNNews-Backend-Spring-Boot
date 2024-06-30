@@ -93,11 +93,15 @@ public class Notification {
     @JoinColumn(name = "commment_id")
     private Comment comment;
 
+
     @Column(name = "is_seen")
     private Integer isSeen;
 
 
     // Constructors, getters, and setters
+
+
+
 
 
     public Integer getIsSeen() {

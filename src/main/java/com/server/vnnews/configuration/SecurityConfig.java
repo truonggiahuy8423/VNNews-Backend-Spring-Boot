@@ -35,7 +35,9 @@ public class SecurityConfig {
             "/get-follow-follower",
             "/follow-request",
             "/unfollow-request",
-            "/set-up-user-menu"
+            "/set-up-user-menu",
+            "/api/notification"
+
     };
 
     @Bean
