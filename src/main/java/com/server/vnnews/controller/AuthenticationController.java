@@ -31,5 +31,8 @@ public class AuthenticationController {
         return new ResponseEntity<>(authenticationService.register(user), HttpStatus.OK);
     }
 
-
+    @PostMapping("/api/auth/validate")
+    public Integer validate(@RequestBody AuthenticationRequest user) {
+        return authenticationService.validateLogin(user);
+    }
 }
