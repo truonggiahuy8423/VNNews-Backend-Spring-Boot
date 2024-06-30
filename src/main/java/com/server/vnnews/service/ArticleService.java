@@ -476,9 +476,4 @@ public class ArticleService {
             throw new AppRuntimeException(e.getMessage(), AppRuntimeException.UNKNOWN_ERROR);
         }
     }
-     public List<Article> searchArticles(String keyword) {
-        String lowercaseKeyword = keyword.toLowerCase(); // Chuyển đổi từ khóa tìm kiếm thành chữ thường
-        return articleRepository.searchByTitleOrDescription(lowercaseKeyword);
-    
-    }
 }
