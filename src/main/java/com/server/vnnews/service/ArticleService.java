@@ -3,10 +3,7 @@ package com.server.vnnews.service;
 import com.server.vnnews.common.FilterType;
 import com.server.vnnews.dto.*;
 import com.server.vnnews.entity.*;
-import com.server.vnnews.entity.composite.ArticleCategoryId;
-import com.server.vnnews.entity.composite.FavoriteId;
-import com.server.vnnews.entity.composite.LikeCommentId;
-import com.server.vnnews.entity.composite.SeeLaterId;
+import com.server.vnnews.entity.composite.*;
 import com.server.vnnews.exception.AppRuntimeException;
 import com.server.vnnews.exception.DatabaseException;
 import com.server.vnnews.repository.*;
@@ -56,6 +53,9 @@ public class ArticleService {
 
     @Autowired
     private SeeLaterRepository seeLaterRepository;
+
+    @Autowired
+    private ViewRepository viewRepository;
 
     public List<NewsFeedArticleDTO> getArticlesInNewsFeed(int pageIndex, Long categoryId, int filterType) {
         Pageable pageable = PageRequest.of(pageIndex - 1, 10); // pageIndex - 1 vì Spring Data JPA sử dụng chỉ mục trang từ 0
@@ -139,19 +139,43 @@ public class ArticleService {
 
 
     public ArticleInReadingPageDTO getArticleById(Long articleId, Long userId) {
+        // Lấy danh sách các category của bài viết
+        List<Category> cates = articleCategoryRepository.getArticleCategoriesByArticleId(articleId);
+
+        // Lấy thời gian hiện tại và thời gian bắt đầu từ 0h của ngày hiện tại
+        Date now = new Date();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(now);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        Date startOfDay = cal.getTime();
+
+        // Tạo Pageable để giới hạn kết quả trả về
+        Pageable pageable = PageRequest.of(0, 5); // Trang đầu tiên, 5 kết quả
+
+        // Gọi phương thức getProposal với danh sách categoryId, thời gian bắt đầu và hiện tại
+        List<Long> categoryIds = cates.stream().map(Category::getCategoryId).collect(Collectors.toList());
+        List<NewsFeedArticleDTO> proposals = articleRepository.getProposal(startOfDay, now, categoryIds, pageable);
+
+        // Tạo đối tượng ArticleInReadingPageDTO
         ArticleInReadingPageDTO article = new ArticleInReadingPageDTO(
                 articleRepository.getArticleById(articleId),
                 bodyItemRepository.getArticleBodyItemsByArticleId(articleId),
-                articleCategoryRepository.getArticleCategoriesByArticleId(articleId),
+                cates,
                 favoriteRepository.findById(new FavoriteId(userId, articleId)).isPresent() ? 1 : 0,
-                seeLaterRepository.findById(new SeeLaterId(userId, articleId)).isPresent() ? 1 : 0
+                seeLaterRepository.findById(new SeeLaterId(userId, articleId)).isPresent() ? 1 : 0,
+                proposals
         );
 
-
-        System.out.println(article.getIsSaved() + " " + article.getIsSeeLater());
+        System.out.println(article.getIsSaved() + " " + article.getIsSeeLater() + "pro: " + article.getProposal().size());
 
         return article;
     }
+
+
+
 
     public CommentLoadingResponse getCommentsByArticleId(Long articleId, Integer pageIndex) {
         Long commentCount = commentRepository.count();
@@ -418,6 +442,32 @@ public class ArticleService {
 
         try {
             seeLaterRepository.deleteById(seeLater.getId());
+
+            return request;
+        } catch (DataIntegrityViolationException e) {
+            throw new DatabaseException(e.getMessage(), DatabaseException.DATA_INTEGRITY_VIOLATION);
+        } catch (Exception e) {
+            throw new AppRuntimeException(e.getMessage(), AppRuntimeException.UNKNOWN_ERROR);
+        }
+    }
+
+    public BookmarkRequest viewArticle(BookmarkRequest request) {
+        View view = new View();
+
+        view.setTime(request.getTime());
+        view.setId(new ViewId(request.getUserId(), request.getArticleId()));
+        view.setArticle(articleRepository.findArticleByArticleId(request.getArticleId()));
+        view.setUser(userRepository.findByUserId(request.getUserId()));
+
+        try {
+            View inserted = viewRepository.save(view);
+            if (inserted == null) {
+                throw new RuntimeException("Inserted view is null");
+            }
+
+            request.setArticleId(inserted.getId().getArticleId());
+            request.setUserId(inserted.getId().getUserId());
+            request.setTime(inserted.getTime());
 
             return request;
         } catch (DataIntegrityViolationException e) {

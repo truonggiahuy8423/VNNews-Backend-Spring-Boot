@@ -212,4 +212,15 @@ public class ArticleController {
             throw new AppRuntimeException(AppRuntimeException.AUTHENTICATION_FAILED_MESSAGE, AppRuntimeException.AUTHENTICATION_FAILED);
         }
     }
+    @PostMapping("/api/article/view-article")
+    public ResponseEntity<BookmarkRequest> viewArticle(@RequestBody BookmarkRequest request, @RequestHeader("Authorization") String token) {
+        String jwt = token.substring(7);
+        try {
+            Long userIdFromToken = AuthenticationService.getUserIdFromToken(jwt);
+            request.setUserId(userIdFromToken);
+            return new ResponseEntity<>(service.viewArticle(request), HttpStatus.OK);
+        } catch (ParseException e) {
+            throw new AppRuntimeException(AppRuntimeException.AUTHENTICATION_FAILED_MESSAGE, AppRuntimeException.AUTHENTICATION_FAILED);
+        }
+    }
 }

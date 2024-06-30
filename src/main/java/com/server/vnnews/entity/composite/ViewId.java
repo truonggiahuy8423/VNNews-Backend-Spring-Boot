@@ -13,4 +13,28 @@ public class ViewId implements Serializable {
     private Long articleId;
 
     // Constructors, getters, and setters
+
+    public ViewId() {
+    }
+
+    public ViewId(Long userId, Long articleId) {
+        this.userId = userId;
+        this.articleId = articleId;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public Long getArticleId() {
+        return articleId;
+    }
+
+    public void setArticleId(Long articleId) {
+        this.articleId = articleId;
+    }
 }

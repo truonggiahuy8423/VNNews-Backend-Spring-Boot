@@ -17,10 +17,12 @@ public class View implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", insertable = false, updatable = false)
+    @MapsId("userId")  // Đây là quan trọng để ánh xạ chính xác composite key
     private User user;
 
     @ManyToOne
     @JoinColumn(name = "article_id", referencedColumnName = "article_id", insertable = false, updatable = false)
+    @MapsId("articleId")  // Đây là quan trọng để ánh xạ chính xác composite key
     private Article article;
 
     // Constructors, getters, and setters

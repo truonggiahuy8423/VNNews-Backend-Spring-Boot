@@ -74,6 +74,23 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
             "ORDER BY COUNT(v) DESC")
     List<NewsFeedArticleDTO> getArticlesInNewsFeedWithCategoryIdAndHighestViewFilter(@Param("startTime") Date startTime, @Param("endTime") Date endTime, @Param("categoryId") Long categoryId, Pageable pageable);
 
+    @Query("SELECT new com.server.vnnews.dto.NewsFeedArticleDTO(" +
+            "a.articleId, a.title, a.description, a.thumbnail, a.thumbnailName, a.createTime, a.modifyTime, " +
+            "COUNT(v), COUNT(c), u.userId, u.name, u.avatar, COUNT(f), COUNT(fa)) " +
+            "FROM Article a " +
+            "LEFT JOIN a.views v ON v.article.articleId = a.articleId AND v.time >= :startTime AND v.time < :endTime " +
+            "LEFT JOIN a.comments c " +
+            "LEFT JOIN a.favorites fa " +
+            "LEFT JOIN a.user u " +
+            "LEFT JOIN u.followers f " +
+            "LEFT JOIN a.articleCategories ac " +
+            "WHERE ac.id.categoryId IN :categoryIds " +
+            "GROUP BY a.articleId, a.title, a.description, a.thumbnail, a.thumbnailName, a.createTime, a.modifyTime, u.userId, u.name, u.avatar " +
+            "ORDER BY COUNT(v) DESC")
+    List<NewsFeedArticleDTO> getProposal(@Param("startTime") Date startTime, @Param("endTime") Date endTime, @Param("categoryIds") List<Long> categoryIds, Pageable pageable);
+
+
+
 
     // Các phương thức tùy chỉnh có thể được định nghĩa ở đây nếu cần
 

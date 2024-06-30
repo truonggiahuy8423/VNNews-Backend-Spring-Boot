@@ -8,8 +8,17 @@ import java.util.List;
 public class ArticleInReadingPageDTO extends NewsFeedArticleDTO {
     private List<BodyItem> bodyItemList;
     private List<Category> categories;
+    private List<NewsFeedArticleDTO> proposal;
     private int isSaved;
     private int isSeeLater;
+
+    public List<NewsFeedArticleDTO> getProposal() {
+        return proposal;
+    }
+
+    public void setProposal(List<NewsFeedArticleDTO> proposal) {
+        this.proposal = proposal;
+    }
 
     public int getIsSaved() {
         return isSaved;
@@ -33,7 +42,7 @@ public class ArticleInReadingPageDTO extends NewsFeedArticleDTO {
 
     // Hàm khởi tạo sử dụng NewsFeedArticleDTO
 
-    public ArticleInReadingPageDTO(NewsFeedArticleDTO newsFeedArticleDTO, List<BodyItem> bodyItemList, List<Category> categories, int isSaved, int isSeeLater) {
+    public ArticleInReadingPageDTO(NewsFeedArticleDTO newsFeedArticleDTO, List<BodyItem> bodyItemList, List<Category> categories, int isSaved, int isSeeLater, List<NewsFeedArticleDTO> proposal) {
         super(newsFeedArticleDTO.getArticleId(),
                 newsFeedArticleDTO.getTitle(),
                 newsFeedArticleDTO.getDescription(),
@@ -53,6 +62,7 @@ public class ArticleInReadingPageDTO extends NewsFeedArticleDTO {
         this.categories = categories;
         this.isSaved = isSaved;
         this.isSeeLater = isSeeLater;
+        this.proposal = proposal;
     }
 
     public void setBodyItemList(List<BodyItem> bodyItemList) {
