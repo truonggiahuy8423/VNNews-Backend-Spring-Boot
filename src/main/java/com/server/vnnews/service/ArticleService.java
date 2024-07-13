@@ -241,7 +241,10 @@ public class ArticleService {
              throw new AppRuntimeException(e.getMessage(), AppRuntimeException.UNKNOWN_ERROR);
          }
     }
-
+    public List<Article> searchArticles(String keyword) {
+        String lowercaseKeyword = keyword.toLowerCase(); // Chuyển đổi từ khóa tìm kiếm thành chữ thường
+        return articleRepository.searchByTitleOrDescription(lowercaseKeyword);
+    }
     public List<ArticleScrollPageDTO> getArticlesScrollPage(int pageIndex){
         Pageable pageable =  PageRequest.of(pageIndex - 1, 5); // pageIndex - 1 vì Spring Data JPA sử dụng chỉ mục trang từ 0
         List<ArticleScrollPageDTO> articleScrollPageDTOList = articleRepository.getArticlesScrollPage(pageable);

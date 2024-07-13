@@ -1,6 +1,7 @@
 package com.server.vnnews.controller;
 
 import com.server.vnnews.dto.*;
+import com.server.vnnews.entity.Article;
 import com.server.vnnews.entity.Category;
 import com.server.vnnews.exception.AppRuntimeException;
 import com.server.vnnews.service.ArticleService;
@@ -222,5 +223,9 @@ public class ArticleController {
         } catch (ParseException e) {
             throw new AppRuntimeException(AppRuntimeException.AUTHENTICATION_FAILED_MESSAGE, AppRuntimeException.AUTHENTICATION_FAILED);
         }
+    }
+    @GetMapping("/api/article/search")
+    public List<Article> searchArticles(@RequestParam("search_query") String keyword) {
+        return service.searchArticles(keyword);
     }
 }

@@ -169,4 +169,8 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
             "LEFT JOIN a.user u " +
             "Where u.userId= :userId")
     Long getNoPostByUserId(@Param("userId") Long userId);
+
+    @Query("SELECT a FROM Article a WHERE a.title LIKE CONCAT('%', :keyword, '%') OR a.description LIKE CONCAT('%', :keyword, '%')")
+    List<Article> searchByTitleOrDescription(@Param("keyword") String keyword);
+
 }
